@@ -139,27 +139,77 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('rejoin', ({ roomCode, playerName, playerId }) => {
+    const room = rooms.get(roomCode);
+    if (!room) return;
+
+    // Re-associate player: old socket ID → new socket ID
+    const player = room.players.get(playerId);
+    if (player) {
+      room.players.delete(playerId);
+      player.id = socket.id;
+      room.players.set(socket.id, player);
+      const idx = room.drawerOrder.indexOf(playerId);
+      if (idx !== -1) room.drawerOrder[idx] = socket.id;
+      if (room.hostId === playerId) room.hostId = socket.id;
+    } else {
+      room.addPlayer(socket.id, playerName);
+    }
+
+    socket.join(roomCode);
+
+    const drawerId = room.drawerId;
+    const isDrawer = socket.id === drawerId;
+
+    socket.emit('game-state', {
+      players: room.getPublicPlayers(),
+      drawerId,
+      drawerName: room.players.get(drawerId)?.name,
+      round: room.round,
+      maxRounds: room.maxRounds,
+      state: room.state,
+      wordHint: room.state === 'drawing' && !isDrawer ? room.wordHint() : null,
+      wordLength: room.currentWord ? room.currentWord.length : 0,
+    });
+
+    if (isDrawer && room.state === 'selecting') {
+      socket.emit('word-options', getRandomWords(3));
+    }
+    if (isDrawer && room.state === 'drawing') {
+      socket.emit('your-word', room.currentWord);
+    }
+  });
+
   socket.on('disconnect', () => {
     for (const [code, room] of rooms) {
       if (!room.players.has(socket.id)) continue;
       const wasDrawer = room.drawerId === socket.id;
-      room.removePlayer(socket.id);
+      const inGame = room.state !== 'lobby';
 
-      if (room.players.size === 0) {
-        rooms.delete(code);
-        break;
-      }
+      const doRemove = () => {
+        if (!room.players.has(socket.id)) return; // already rejoined under new socket
+        room.removePlayer(socket.id);
 
-      if (room.hostId === socket.id) {
-        room.hostId = [...room.players.keys()][0];
-        io.to(room.hostId).emit('you-are-host');
-      }
+        if (room.players.size === 0) { rooms.delete(code); return; }
 
-      io.to(code).emit('player-left', { players: room.getPublicPlayers() });
+        if (room.hostId === socket.id) {
+          room.hostId = [...room.players.keys()][0];
+          io.to(room.hostId).emit('you-are-host');
+        }
 
-      if (wasDrawer && room.state === 'drawing') {
-        clearInterval(room.timer);
-        endTurn(room);
+        io.to(code).emit('player-left', { players: room.getPublicPlayers() });
+
+        if (wasDrawer && room.state === 'drawing') {
+          clearInterval(room.timer);
+          endTurn(room);
+        }
+      };
+
+      // Grace period during game to allow page-navigation rejoin
+      if (inGame) {
+        setTimeout(doRemove, 10000);
+      } else {
+        doRemove();
       }
       break;
     }

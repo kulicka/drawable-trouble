@@ -85,6 +85,7 @@ socket.on('room-joined', ({ code, playerId, players }) => {
 socket.on('player-joined', ({ players }) => renderPlayers(players));
 
 socket.on('game-started', () => {
+  sessionStorage.setItem('playerName', playerNameInput.value.trim() || 'Guest');
   window.location.href = '/game.html';
 });
 

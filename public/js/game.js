@@ -54,8 +54,33 @@ function showTurnOverlay(text, duration = 3000) {
 // ── Socket events ──
 
 socket.on('connect', () => {
-  // Re-associate identity after page navigation
-  if (myId) socket.emit('rejoin', { playerId: myId });
+  const playerId  = sessionStorage.getItem('playerId');
+  const roomCode  = sessionStorage.getItem('roomCode');
+  const playerName = sessionStorage.getItem('playerName');
+  if (playerId && roomCode) {
+    socket.emit('rejoin', { playerId, roomCode, playerName });
+  }
+});
+
+socket.on('game-state', ({ players, drawerId, drawerName, round, maxRounds, state, wordHint, wordLength }) => {
+  myId = socket.id; // socket.id changed after page navigation
+  roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
+  renderPlayers(players, drawerId);
+
+  const isDrawer = socket.id === drawerId;
+  setDrawerUI(isDrawer);
+
+  if (state === 'selecting' && isDrawer) {
+    wordDisplay.textContent = 'Choose a word!';
+  } else if (state === 'drawing') {
+    wordDisplay.textContent = isDrawer ? '(your word)' : (wordHint || '_ '.repeat(wordLength).trim());
+  } else {
+    wordDisplay.textContent = 'Waiting...';
+  }
+
+  if (!isDrawer && drawerName) {
+    addChat(`${drawerName} is drawing!`, 'system');
+  }
 });
 
 socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength }) => {
