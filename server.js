@@ -44,7 +44,6 @@ function endTurn(room) {
     }
     const drawerId = room.drawerId;
     const words = getRandomWords(3);
-    io.to(drawerId).emit('word-options', words);
     io.to(room.code).emit('new-turn', {
       drawerId,
       drawerName: room.players.get(drawerId)?.name,
@@ -52,6 +51,7 @@ function endTurn(room) {
       maxRounds: room.maxRounds,
       wordLength: 0,
     });
+    io.to(drawerId).emit('word-options', words);
   }, 4000);
 }
 
@@ -115,27 +115,30 @@ io.on('connection', (socket) => {
 
   socket.on('guess', ({ text }) => {
     const room = [...rooms.values()].find(r => r.players.has(socket.id));
-    if (!room || room.state !== 'drawing') return;
+    if (!room) return;
     const player = room.players.get(socket.id);
     if (!player || socket.id === room.drawerId) return;
 
-    const result = room.checkGuess(socket.id, text);
-
-    if (result === 'already') return;
-
-    if (result === 'wrong') {
-      io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, text });
-    } else {
-      io.to(room.code).emit('correct-guess', {
-        playerId: socket.id,
-        name: player.name,
-        points: result.points,
-        players: room.getPublicPlayers(),
-      });
-      if (room.allGuessed()) {
-        clearInterval(room.timer);
-        endTurn(room);
+    if (room.state === 'drawing') {
+      const result = room.checkGuess(socket.id, text);
+      if (result === 'already') return;
+      if (result === 'wrong') {
+        io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, text });
+      } else {
+        io.to(room.code).emit('correct-guess', {
+          playerId: socket.id,
+          name: player.name,
+          points: result.points,
+          players: room.getPublicPlayers(),
+        });
+        if (room.allGuessed()) {
+          clearInterval(room.timer);
+          endTurn(room);
+        }
       }
+    } else {
+      // Allow chat between turns (selecting / lobby)
+      io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, text });
     }
   });
 

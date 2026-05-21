@@ -85,14 +85,14 @@ socket.on('game-state', ({ players, drawerId, drawerName, round, maxRounds, stat
 
 socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength }) => {
   clearCanvas();
-  wordPicker.classList.add('hidden');
   roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
 
   if (socket.id === drawerId) {
-    // word-options event will show the picker
     wordDisplay.textContent = 'Choose a word!';
     setDrawerUI(true);
+    // word-options arrives after this and will show the picker
   } else {
+    wordPicker.classList.add('hidden');
     setDrawerUI(false);
     wordDisplay.textContent = wordLength ? '_ '.repeat(wordLength).trim() : '...';
     showTurnOverlay(`${drawerName} is drawing!`);
@@ -182,15 +182,20 @@ socket.on('error', (msg) => addChat(`⚠️ ${msg}`, 'system'));
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const text = chatInput.value.trim();
-  if (!text) return;
-  if (!myDrawer) socket.emit('guess', { text });
+  if (!text || myDrawer) return;
+  socket.emit('guess', { text });
   chatInput.value = '';
 });
 
-// Disable chat input for the drawer
 socket.on('your-word', () => {
   chatInput.placeholder = 'You are drawing...';
   chatInput.disabled = true;
+});
+
+// Re-enable chat whenever a new turn starts (old drawer becomes guesser)
+socket.on('new-turn', () => {
+  chatInput.placeholder = 'Type your guess...';
+  chatInput.disabled = false;
 });
 socket.on('turn-ended', () => {
   chatInput.placeholder = 'Type your guess...';
