@@ -8,6 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+app.set('trust proxy', 1);
 app.use(express.static('public'));
 
 const rooms = new Map(); // code → Room
