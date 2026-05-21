@@ -123,5 +123,23 @@ function receiveStroke(data) {
   drawSegment(data.x0, data.y0, data.x1, data.y1, data.color, data.size, data.erase);
 }
 
+// Keep CSS size in sync with the wrapper, preserving the 800×550 aspect ratio.
+// Internal resolution stays fixed so coordinates are consistent across all clients.
+const CANVAS_RATIO = 800 / 550;
+
+function fitCanvas() {
+  const wrapper = canvas.parentElement;
+  const ww = wrapper.clientWidth;
+  const wh = wrapper.clientHeight;
+  let w = ww;
+  let h = w / CANVAS_RATIO;
+  if (h > wh) { h = wh; w = h * CANVAS_RATIO; }
+  canvas.style.width  = Math.floor(w) + 'px';
+  canvas.style.height = Math.floor(h) + 'px';
+}
+
+new ResizeObserver(fitCanvas).observe(canvas.parentElement);
+fitCanvas();
+
 clearCanvas();
 initToolbar();
