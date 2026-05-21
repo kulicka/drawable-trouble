@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drawable Trouble</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="lobby-page">
+  <div class="lobby-container">
+    <h1 class="logo">✏️ Drawable Trouble</h1>
+    <p class="tagline">Draw it. Guess it. Win it.</p>
+
+    <div class="card" id="name-step">
+      <h2>What's your name?</h2>
+      <input id="player-name" type="text" maxlength="20" placeholder="Your name..." autofocus />
+      <div class="btn-row">
+        <button id="btn-create" class="btn btn-primary">Create Room</button>
+        <button id="btn-join-toggle" class="btn btn-secondary">Join Room</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="join-step">
+      <h2>Enter room code</h2>
+      <input id="room-code" type="text" maxlength="5" placeholder="XXXXX" style="text-transform:uppercase" />
+      <div class="btn-row">
+        <button id="btn-join" class="btn btn-primary">Join</button>
+        <button id="btn-back" class="btn btn-secondary">Back</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="waiting-step">
+      <h2>Room <span id="display-code"></span></h2>
+      <p class="waiting-hint">Share this code with friends!</p>
+      <ul id="player-list"></ul>
+      <button id="btn-start" class="btn btn-primary hidden">Start Game</button>
+      <p id="waiting-msg" class="muted">Waiting for the host to start...</p>
+    </div>
+
+    <p id="error-msg" class="error hidden"></p>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/lobby.js"></script>
+</body>
+</html>

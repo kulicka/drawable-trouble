@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drawable Trouble</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="game-page">
+
+  <header class="game-header">
+    <div class="header-left">
+      <span class="logo-small">✏️ Drawable Trouble</span>
+    </div>
+    <div class="header-center">
+      <div id="word-display" class="word-display">Waiting...</div>
+      <div id="round-display" class="round-display"></div>
+    </div>
+    <div class="header-right">
+      <div id="timer" class="timer">--</div>
+    </div>
+  </header>
+
+  <main class="game-main">
+
+    <aside class="players-panel">
+      <ul id="player-list"></ul>
+    </aside>
+
+    <section class="canvas-section">
+      <div class="canvas-wrapper">
+        <canvas id="game-canvas" width="800" height="550"></canvas>
+
+        <div id="word-picker" class="word-picker hidden">
+          <h3>Pick a word to draw:</h3>
+          <div id="word-options" class="word-options"></div>
+        </div>
+
+        <div id="turn-overlay" class="turn-overlay hidden">
+          <p id="turn-overlay-text"></p>
+        </div>
+      </div>
+
+      <div class="toolbar" id="toolbar">
+        <div class="color-swatches" id="color-swatches"></div>
+        <input type="color" id="custom-color" value="#000000" title="Custom color" />
+        <div class="divider"></div>
+        <label>Size <input type="range" id="brush-size" min="2" max="40" value="6" /></label>
+        <button class="tool-btn" id="btn-eraser" title="Eraser">⬜</button>
+        <button class="tool-btn" id="btn-clear" title="Clear canvas">🗑️</button>
+      </div>
+    </section>
+
+    <aside class="chat-panel">
+      <div id="chat-messages" class="chat-messages"></div>
+      <form id="chat-form" class="chat-form">
+        <input id="chat-input" type="text" placeholder="Type your guess..." maxlength="100" autocomplete="off" />
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </aside>
+
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/canvas.js"></script>
+  <script src="/js/game.js"></script>
+</body>
+</html>
