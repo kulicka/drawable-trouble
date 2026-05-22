@@ -41,7 +41,9 @@ function goToWaiting(code, players) {
 btnCreate.addEventListener('click', () => {
   const name = playerNameInput.value.trim();
   if (!name) return showError('Please enter your name.');
-  socket.emit('create-room', { playerName: name });
+  const playerColor = document.getElementById('player-color').value;
+  sessionStorage.setItem('playerColor', playerColor);
+  socket.emit('create-room', { playerName: name, playerColor });
 });
 
 btnJoinToggle.addEventListener('click', () => {
@@ -58,7 +60,9 @@ btnJoin.addEventListener('click', () => {
   const name = playerNameInput.value.trim() || 'Guest';
   const code = roomCodeInput.value.trim().toUpperCase();
   if (!code) return showError('Please enter a room code.');
-  socket.emit('join-room', { code, playerName: name });
+  const playerColor = document.getElementById('player-color').value;
+  sessionStorage.setItem('playerColor', playerColor);
+  socket.emit('join-room', { code, playerName: name, playerColor });
 });
 
 btnStart.addEventListener('click', () => {
@@ -88,6 +92,7 @@ socket.on('player-joined', ({ players }) => renderPlayers(players));
 
 socket.on('game-started', () => {
   sessionStorage.setItem('playerName', playerNameInput.value.trim() || 'Guest');
+  sessionStorage.setItem('playerColor', document.getElementById('player-color').value);
   window.location.href = '/game.html';
 });
 

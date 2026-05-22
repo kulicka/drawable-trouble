@@ -19,8 +19,8 @@ class Room {
     this.secondsLeft = 0;
   }
 
-  addPlayer(id, name) {
-    this.players.set(id, { id, name, score: 0, hasGuessed: false });
+  addPlayer(id, name, color = '#e94560') {
+    this.players.set(id, { id, name, color, score: 0, hasGuessed: false });
   }
 
   removePlayer(id) {
@@ -32,6 +32,7 @@ class Room {
     return [...this.players.values()].map(p => ({
       id: p.id,
       name: p.name,
+      color: p.color,
       score: p.score,
       hasGuessed: p.hasGuessed,
     }));

@@ -79,11 +79,12 @@ function showTurnOverlay(text, duration = 3000) {
 // ── Socket events ──
 
 socket.on('connect', () => {
-  const playerId  = sessionStorage.getItem('playerId');
-  const roomCode  = sessionStorage.getItem('roomCode');
+  const playerId   = sessionStorage.getItem('playerId');
+  const roomCode   = sessionStorage.getItem('roomCode');
   const playerName = sessionStorage.getItem('playerName');
+  const playerColor = sessionStorage.getItem('playerColor');
   if (playerId && roomCode) {
-    socket.emit('rejoin', { playerId, roomCode, playerName });
+    socket.emit('rejoin', { playerId, roomCode, playerName, playerColor });
   }
 });
 
@@ -156,13 +157,13 @@ socket.on('timer', (seconds) => {
   timerEl.style.color = seconds <= 10 ? '#ff5252' : 'var(--accent)';
 });
 
-socket.on('chat', ({ name, text }) => {
-  addChat(`<span class="sender">${name}:</span> ${text}`);
+socket.on('chat', ({ name, color, text }) => {
+  addChat(`<span class="sender" style="color:${color || 'var(--accent2)'}">${name}:</span> ${text}`);
 });
 
-socket.on('correct-guess', ({ name, points, players }) => {
+socket.on('correct-guess', ({ name, color, points, players }) => {
   playCorrectSound();
-  addChat(`🎉 <strong>${name}</strong> guessed correctly! (+${points})`, 'correct');
+  addChat(`🎉 <span style="color:${color || 'var(--accent2)'};font-weight:700">${name}</span> guessed correctly! (+${points})`, 'correct');
   renderPlayers(players, null);
 });
 

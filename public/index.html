@@ -13,7 +13,10 @@
 
     <div class="card" id="name-step">
       <h2>What's your name?</h2>
-      <input id="player-name" type="text" maxlength="20" placeholder="Your name..." autofocus />
+      <div class="name-row">
+        <input id="player-name" type="text" maxlength="20" placeholder="Your name..." autofocus />
+        <input id="player-color" type="color" value="#e94560" title="Pick your chat color" class="name-color-pick" />
+      </div>
       <div class="btn-row">
         <button id="btn-create" class="btn btn-primary">Create Room</button>
         <button id="btn-join-toggle" class="btn btn-secondary">Join Room</button>

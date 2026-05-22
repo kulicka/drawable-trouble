@@ -58,22 +58,22 @@ function endTurn(room) {
 
 io.on('connection', (socket) => {
 
-  socket.on('create-room', ({ playerName }) => {
+  socket.on('create-room', ({ playerName, playerColor }) => {
     const code = generateCode();
     const room = new Room(code, socket.id);
-    room.addPlayer(socket.id, playerName);
+    room.addPlayer(socket.id, playerName, playerColor);
     rooms.set(code, room);
     socket.join(code);
     socket.emit('room-created', { code, playerId: socket.id, players: room.getPublicPlayers() });
   });
 
-  socket.on('join-room', ({ code, playerName }) => {
+  socket.on('join-room', ({ code, playerName, playerColor }) => {
     const room = rooms.get(code);
     if (!room) return socket.emit('error', 'Room not found.');
     if (room.state !== 'lobby') return socket.emit('error', 'Game already in progress.');
     if (room.players.size >= 8) return socket.emit('error', 'Room is full.');
 
-    room.addPlayer(socket.id, playerName);
+    room.addPlayer(socket.id, playerName, playerColor);
     socket.join(code);
     socket.emit('room-joined', { code, playerId: socket.id, players: room.getPublicPlayers() });
     socket.to(code).emit('player-joined', { players: room.getPublicPlayers() });
@@ -139,11 +139,12 @@ io.on('connection', (socket) => {
       const result = room.checkGuess(socket.id, text);
       if (result === 'already') return;
       if (result === 'wrong') {
-        io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, text });
+        io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, color: player.color, text });
       } else {
         io.to(room.code).emit('correct-guess', {
           playerId: socket.id,
           name: player.name,
+          color: player.color,
           points: result.points,
           players: room.getPublicPlayers(),
         });
@@ -154,11 +155,11 @@ io.on('connection', (socket) => {
       }
     } else {
       // Allow chat between turns (selecting / lobby)
-      io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, text });
+      io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, color: player.color, text });
     }
   });
 
-  socket.on('rejoin', ({ roomCode, playerName, playerId }) => {
+  socket.on('rejoin', ({ roomCode, playerName, playerColor, playerId }) => {
     const room = rooms.get(roomCode);
     if (!room) return;
 
@@ -172,7 +173,7 @@ io.on('connection', (socket) => {
       if (idx !== -1) room.drawerOrder[idx] = socket.id;
       if (room.hostId === playerId) room.hostId = socket.id;
     } else {
-      room.addPlayer(socket.id, playerName);
+      room.addPlayer(socket.id, playerName, playerColor);
     }
 
     socket.join(roomCode);
