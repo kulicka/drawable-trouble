@@ -3,10 +3,14 @@ window._socket = socket;
 
 // ── Audio ──
 let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
 function playCorrectSound() {
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const ctx = audioCtx;
+    const ctx = getAudioCtx();
     [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {  // C5 E5 G5 C6
       const osc  = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -20,6 +24,23 @@ function playCorrectSound() {
       osc.start(t);
       osc.stop(t + 0.45);
     });
+  } catch (_) {}
+}
+
+function playTickSound(seconds) {
+  try {
+    const ctx = getAudioCtx();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = seconds <= 5 ? 1050 : 820;
+    const t = ctx.currentTime;
+    gain.gain.setValueAtTime(seconds <= 5 ? 0.2 : 0.12, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+    osc.start(t);
+    osc.stop(t + 0.09);
   } catch (_) {}
 }
 
@@ -155,6 +176,7 @@ socket.on('canvas-cleared', clearCanvas);
 socket.on('timer', (seconds) => {
   timerEl.textContent = seconds;
   timerEl.style.color = seconds <= 10 ? '#ff5252' : 'var(--accent)';
+  if (seconds <= 10 && seconds > 0) playTickSound(seconds);
 });
 
 socket.on('chat', ({ name, color, text }) => {
