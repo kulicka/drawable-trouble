@@ -203,7 +203,7 @@ socket.on('player-joined', ({ players }) => renderPlayers(players, null));
 socket.on('player-left',   ({ players }) => renderPlayers(players, null));
 
 socket.on('game-started', ({ drawerId, drawerName, round, maxRounds }) => {
-  playAgainControls.style.display = 'none';
+  playAgainControls.classList.add('hidden');
   turnOverlay.classList.add('hidden');
   clearCanvas();
   roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
@@ -223,7 +223,7 @@ socket.on('game-ended', ({ players }) => {
   const lines = sorted.map((p, i) => `${i + 1}. ${p.name} — ${p.score} pts`).join('\n');
   turnOverlayText.textContent = 'Game over!\n\n' + lines;
   turnOverlay.classList.remove('hidden');
-  if (isHost) playAgainControls.style.display = 'flex';
+  if (isHost) playAgainControls.classList.remove('hidden');
   wordDisplay.textContent = '🏆 Game Over';
   timerEl.textContent = '--';
   addChat('Game over! Final scores:\n' + lines, 'system');

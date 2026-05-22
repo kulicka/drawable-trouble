@@ -19,8 +19,9 @@ class Room {
     this.secondsLeft = 0;
   }
 
-  addPlayer(id, name, color = '#e94560') {
-    this.players.set(id, { id, name, color, score: 0, hasGuessed: false });
+  addPlayer(id, name, color) {
+    const safeColor = (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color)) ? color : '#e94560';
+    this.players.set(id, { id, name, color: safeColor, score: 0, hasGuessed: false });
   }
 
   removePlayer(id) {

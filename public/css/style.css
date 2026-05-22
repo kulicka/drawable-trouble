@@ -112,7 +112,7 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 .chat-panel { width: 240px; background: var(--surface); display: flex; flex-direction: column; flex-shrink: 0; border-left: 2px solid var(--card); }
 .chat-messages { flex: 1; overflow-y: auto; padding: .75rem; display: flex; flex-direction: column; gap: .4rem; }
 .chat-msg { font-size: .85rem; line-height: 1.4; }
-.chat-msg .sender { font-weight: 700; color: var(--accent2); }
+.chat-msg .sender { font-weight: 700; }
 .chat-msg.correct { color: var(--correct); font-weight: 700; }
 .chat-msg.system { color: var(--muted); font-style: italic; }
 .chat-form { display: flex; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
