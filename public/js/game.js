@@ -1,6 +1,28 @@
 const socket = io();
 window._socket = socket;
 
+// ── Audio ──
+let audioCtx = null;
+function playCorrectSound() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = audioCtx;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {  // C5 E5 G5 C6
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 0.11;
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+      osc.start(t);
+      osc.stop(t + 0.45);
+    });
+  } catch (_) {}
+}
+
 const wordDisplay    = document.getElementById('word-display');
 const roundDisplay   = document.getElementById('round-display');
 const timerEl        = document.getElementById('timer');
@@ -139,6 +161,7 @@ socket.on('chat', ({ name, text }) => {
 });
 
 socket.on('correct-guess', ({ name, points, players }) => {
+  playCorrectSound();
   addChat(`🎉 <strong>${name}</strong> guessed correctly! (+${points})`, 'correct');
   renderPlayers(players, null);
 });
