@@ -12,10 +12,13 @@ const wordPicker     = document.getElementById('word-picker');
 const wordOptions    = document.getElementById('word-options');
 const turnOverlay    = document.getElementById('turn-overlay');
 const turnOverlayText= document.getElementById('turn-overlay-text');
+const btnPlayAgain        = document.getElementById('btn-play-again');
+const playAgainControls   = document.getElementById('play-again-controls');
 const toolbar        = document.getElementById('toolbar');
 
 let myId = sessionStorage.getItem('playerId');
 let myDrawer = false;
+let isHost = false;
 
 function renderPlayers(players, drawerId) {
   playerListEl.innerHTML = players.map(p => `
@@ -62,8 +65,9 @@ socket.on('connect', () => {
   }
 });
 
-socket.on('game-state', ({ players, drawerId, drawerName, round, maxRounds, state, wordHint, wordLength }) => {
+socket.on('game-state', ({ players, drawerId, drawerName, round, maxRounds, state, wordHint, wordLength, isHostFlag }) => {
   myId = socket.id; // socket.id changed after page navigation
+  isHost = !!isHostFlag;
   roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
   renderPlayers(players, drawerId);
 
@@ -153,8 +157,13 @@ socket.on('player-joined', ({ players }) => renderPlayers(players, null));
 socket.on('player-left',   ({ players }) => renderPlayers(players, null));
 
 socket.on('game-started', ({ drawerId, drawerName, round, maxRounds }) => {
+  playAgainControls.style.display = 'none';
+  turnOverlay.classList.add('hidden');
+  clearCanvas();
   roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
   renderPlayers([], drawerId);
+  chatInput.placeholder = 'Type your guess...';
+  chatInput.disabled = false;
   if (socket.id === drawerId) {
     setDrawerUI(true);
     wordDisplay.textContent = 'Choose a word!';
@@ -166,17 +175,25 @@ socket.on('game-started', ({ drawerId, drawerName, round, maxRounds }) => {
 socket.on('game-ended', ({ players }) => {
   const sorted = [...players].sort((a, b) => b.score - a.score);
   const lines = sorted.map((p, i) => `${i + 1}. ${p.name} — ${p.score} pts`).join('\n');
-  showTurnOverlay('Game over!\n\n' + lines, 99999);
+  turnOverlayText.textContent = 'Game over!\n\n' + lines;
+  turnOverlay.classList.remove('hidden');
+  if (isHost) playAgainControls.style.display = 'flex';
   wordDisplay.textContent = '🏆 Game Over';
   timerEl.textContent = '--';
   addChat('Game over! Final scores:\n' + lines, 'system');
 });
 
 socket.on('you-are-host', () => {
+  isHost = true;
   addChat('You are now the host.', 'system');
 });
 
 socket.on('error', (msg) => addChat(`⚠️ ${msg}`, 'system'));
+
+btnPlayAgain.addEventListener('click', () => {
+  const rounds = parseInt(document.getElementById('rounds-select-game').value) || 3;
+  socket.emit('restart-game', { rounds });
+});
 
 // ── Chat / guess ──
 chatForm.addEventListener('submit', (e) => {

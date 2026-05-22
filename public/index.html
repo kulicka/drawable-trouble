@@ -33,6 +33,18 @@
       <h2>Room <span id="display-code"></span></h2>
       <p class="waiting-hint">Share this code with friends!</p>
       <ul id="player-list"></ul>
+      <div id="host-controls" class="hidden" style="margin-bottom:.75rem;">
+        <label style="display:flex;align-items:center;justify-content:center;gap:.6rem;font-size:.9rem;color:var(--muted);">
+          Rounds
+          <select id="rounds-select" style="background:var(--surface);color:var(--text);border:none;border-radius:6px;padding:.3rem .6rem;font-size:.9rem;">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </label>
+      </div>
       <button id="btn-start" class="btn btn-primary hidden">Start Game</button>
       <p id="waiting-msg" class="muted">Waiting for the host to start...</p>
     </div>

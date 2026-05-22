@@ -62,7 +62,8 @@ btnJoin.addEventListener('click', () => {
 });
 
 btnStart.addEventListener('click', () => {
-  socket.emit('start-game');
+  const rounds = parseInt(document.getElementById('rounds-select').value) || 3;
+  socket.emit('start-game', { rounds });
 });
 
 socket.on('room-created', ({ code, playerId, players }) => {
@@ -72,6 +73,7 @@ socket.on('room-created', ({ code, playerId, players }) => {
   sessionStorage.setItem('roomCode', code);
   goToWaiting(code, players);
   btnStart.classList.remove('hidden');
+  document.getElementById('host-controls').classList.remove('hidden');
   waitingMsg.classList.add('hidden');
 });
 

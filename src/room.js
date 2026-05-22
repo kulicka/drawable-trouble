@@ -41,9 +41,10 @@ class Room {
     return this.drawerOrder[this.drawerIndex] ?? null;
   }
 
-  startGame() {
+  startGame(maxRounds = 3) {
     this.state = 'selecting';
     this.round = 1;
+    this.maxRounds = maxRounds;
     this.drawerOrder = [...this.players.keys()];
     this.drawerIndex = 0;
     this.players.forEach(p => { p.score = 0; p.hasGuessed = false; });
