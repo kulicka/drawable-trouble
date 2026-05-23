@@ -381,47 +381,49 @@
   <input type="hidden" id="player-color" value="#e879f9" />
 
   <script>
-    const COLORS = [
-      '#f87171', '#fb923c', '#fbbf24', '#facc15',
-      '#a3e635', '#34d399', '#2dd4bf', '#38bdf8',
-      '#60a5fa', '#818cf8', '#a78bfa', '#e879f9',
-      '#f472b6', '#fb7185', '#94a3b8', '#e2e8f0',
-    ];
+    (function () {
+      const COLORS = [
+        '#f87171', '#fb923c', '#fbbf24', '#facc15',
+        '#a3e635', '#34d399', '#2dd4bf', '#38bdf8',
+        '#60a5fa', '#818cf8', '#a78bfa', '#e879f9',
+        '#f472b6', '#fb7185', '#94a3b8', '#e2e8f0',
+      ];
 
-    let activeIdx = 11; // default: fuchsia
+      let activeIdx = 11; // default: fuchsia
 
-    const colorInput  = document.getElementById('player-color');
-    const brandName   = document.getElementById('brandName');
-    const starFill    = document.getElementById('starFill');
-    const starGlow    = document.getElementById('starGlow');
-    const btnCreate   = document.getElementById('btn-create');
-    const logoMark    = document.getElementById('logoMark');
+      const colorInput  = document.getElementById('player-color');
+      const brandName   = document.getElementById('brandName');
+      const starFill    = document.getElementById('starFill');
+      const starGlow    = document.getElementById('starGlow');
+      const btnCreate   = document.getElementById('btn-create');
+      const logoMark    = document.getElementById('logoMark');
 
-    function applyColor(color) {
-      colorInput.value                  = color;
-      brandName.style.color             = color;
-      starFill.setAttribute('fill', color);
-      starGlow.setAttribute('fill', color);
-      btnCreate.style.background        = color;
-      logoMark.style.borderColor        = color + '55';
-    }
+      function applyColor(color) {
+        colorInput.value                  = color;
+        brandName.style.color             = color;
+        starFill.setAttribute('fill', color);
+        starGlow.setAttribute('fill', color);
+        btnCreate.style.background        = color;
+        logoMark.style.borderColor        = color + '55';
+      }
 
-    const swatchContainer = document.getElementById('swatch-container');
-    COLORS.forEach((color, i) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'swatch' + (i === activeIdx ? ' active' : '');
-      btn.style.background = color;
-      btn.setAttribute('aria-label', 'Color ' + (i + 1));
-      btn.addEventListener('click', () => {
-        activeIdx = i;
-        document.querySelectorAll('.swatch').forEach((s, idx) => s.classList.toggle('active', idx === i));
-        applyColor(color);
+      const swatchContainer = document.getElementById('swatch-container');
+      COLORS.forEach((color, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'swatch' + (i === activeIdx ? ' active' : '');
+        btn.style.background = color;
+        btn.setAttribute('aria-label', 'Color ' + (i + 1));
+        btn.addEventListener('click', () => {
+          activeIdx = i;
+          document.querySelectorAll('.swatch').forEach((s, idx) => s.classList.toggle('active', idx === i));
+          applyColor(color);
+        });
+        swatchContainer.appendChild(btn);
       });
-      swatchContainer.appendChild(btn);
-    });
 
-    applyColor(COLORS[activeIdx]);
+      applyColor(COLORS[activeIdx]);
+    })();
   </script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/lobby.js"></script>
