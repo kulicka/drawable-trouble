@@ -36,7 +36,7 @@
       <h2>Room <span id="display-code"></span></h2>
       <p class="waiting-hint">Share this code with friends!</p>
       <ul id="player-list"></ul>
-      <div id="host-controls" class="hidden" style="margin-bottom:.75rem;">
+      <div id="host-controls" class="hidden" style="margin-bottom:.75rem;display:flex;flex-direction:column;gap:.5rem;align-items:center;">
         <label style="display:flex;align-items:center;justify-content:center;gap:.6rem;font-size:.9rem;color:var(--muted);">
           Rounds
           <select id="rounds-select" style="background:var(--surface);color:var(--text);border:none;border-radius:6px;padding:.3rem .6rem;font-size:.9rem;">
@@ -45,6 +45,15 @@
             <option value="3" selected>3</option>
             <option value="4">4</option>
             <option value="5">5</option>
+          </select>
+        </label>
+        <label style="display:flex;align-items:center;justify-content:center;gap:.6rem;font-size:.9rem;color:var(--muted);">
+          Difficulty
+          <select id="difficulty-select" style="background:var(--surface);color:var(--text);border:none;border-radius:6px;padding:.3rem .6rem;font-size:.9rem;">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+            <option value="mixed">Mixed</option>
           </select>
         </label>
       </div>

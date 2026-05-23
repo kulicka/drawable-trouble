@@ -250,7 +250,8 @@ socket.on('error', (msg) => addChat(`⚠️ ${msg}`, 'system'));
 
 btnPlayAgain.addEventListener('click', () => {
   const rounds = parseInt(document.getElementById('rounds-select-game').value) || 3;
-  socket.emit('restart-game', { rounds });
+  const difficulty = document.getElementById('difficulty-select-game').value || 'medium';
+  socket.emit('restart-game', { rounds, difficulty });
 });
 
 // ── Chat / guess ──

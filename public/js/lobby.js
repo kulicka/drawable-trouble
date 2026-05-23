@@ -67,7 +67,8 @@ btnJoin.addEventListener('click', () => {
 
 btnStart.addEventListener('click', () => {
   const rounds = parseInt(document.getElementById('rounds-select').value) || 3;
-  socket.emit('start-game', { rounds });
+  const difficulty = document.getElementById('difficulty-select').value || 'medium';
+  socket.emit('start-game', { rounds, difficulty });
 });
 
 socket.on('room-created', ({ code, playerId, players }) => {

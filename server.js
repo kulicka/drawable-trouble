@@ -44,7 +44,7 @@ function endTurn(room) {
       return;
     }
     const drawerId = room.drawerId;
-    const words = getRandomWords(3);
+    const words = getRandomWords(3, room.difficulty);
     io.to(room.code).emit('new-turn', {
       drawerId,
       drawerName: room.players.get(drawerId)?.name,
@@ -79,10 +79,10 @@ io.on('connection', (socket) => {
     socket.to(code).emit('player-joined', { players: room.getPublicPlayers() });
   });
 
-  socket.on('start-game', ({ rounds = 3 } = {}) => {
+  socket.on('start-game', ({ rounds = 3, difficulty = 'medium' } = {}) => {
     const room = [...rooms.values()].find(r => r.hostId === socket.id);
     if (!room || room.players.size < 2) return socket.emit('error', 'Need at least 2 players to start.');
-    const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10));
+    const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
     const drawerId = room.drawerId;
     io.to(room.code).emit('game-started', {
       drawerId,
@@ -93,11 +93,11 @@ io.on('connection', (socket) => {
     io.to(drawerId).emit('word-options', words);
   });
 
-  socket.on('restart-game', ({ rounds = 3 } = {}) => {
+  socket.on('restart-game', ({ rounds = 3, difficulty = 'medium' } = {}) => {
     const room = [...rooms.values()].find(r => r.hostId === socket.id);
     if (!room || room.state !== 'ended') return;
     clearInterval(room.timer);
-    const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10));
+    const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
     const drawerId = room.drawerId;
     io.to(room.code).emit('game-started', {
       drawerId,

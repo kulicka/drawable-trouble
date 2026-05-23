@@ -12,6 +12,7 @@ class Room {
     this.state = 'lobby';    // lobby | selecting | drawing | ended
     this.round = 0;
     this.maxRounds = 3;
+    this.difficulty = 'medium';
     this.drawerIndex = -1;
     this.drawerOrder = [];
     this.currentWord = null;
@@ -43,14 +44,15 @@ class Room {
     return this.drawerOrder[this.drawerIndex] ?? null;
   }
 
-  startGame(maxRounds = 3) {
+  startGame(maxRounds = 3, difficulty = 'medium') {
     this.state = 'selecting';
     this.round = 1;
     this.maxRounds = maxRounds;
+    this.difficulty = ['easy', 'medium', 'hard', 'mixed'].includes(difficulty) ? difficulty : 'medium';
     this.drawerOrder = [...this.players.keys()];
     this.drawerIndex = 0;
     this.players.forEach(p => { p.score = 0; p.hasGuessed = false; });
-    return getRandomWords(3);
+    return getRandomWords(3, this.difficulty);
   }
 
   selectWord(word) {
