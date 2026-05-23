@@ -4,42 +4,350 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Drawable Trouble</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Bricolage+Grotesque:opsz,wght@12..96,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .hidden { display: none !important; }
+
+    body {
+      min-height: 100vh;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #fff;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Ambient orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb1 { width: 600px; height: 600px; background: #2d1a35; top: -180px; right: -120px; opacity: 0.7; }
+    .orb2 { width: 380px; height: 380px; background: #1a0f22; bottom: -100px; left: -80px; opacity: 0.9; }
+
+    /* ── Layout ── */
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    /* ── Brand ── */
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 2.5rem;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 54px;
+      height: 54px;
+      background: #1f1020;
+      border: 1px solid #e879f955;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.3s;
+    }
+
+    .brand-name {
+      font-family: 'Alex Brush', cursive;
+      font-size: 58px;
+      font-weight: 400;
+      line-height: 1.1;
+      color: #e879f9;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+
+    .tagline {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+      padding: 2rem;
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .card-heading {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Inputs ── */
+    .text-input {
+      width: 100%;
+      height: 48px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      padding: 0 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .text-input::placeholder { color: rgba(255,255,255,0.28); }
+    .text-input:focus { border-color: rgba(232,121,249,0.55); }
+
+    /* ── Color swatches ── */
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .swatch {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2.5px solid transparent;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.12s, border-color 0.12s;
+      position: relative;
+      background: none;
+      padding: 0;
+    }
+    .swatch:hover { transform: scale(1.2); }
+    .swatch.active { border-color: #fff; transform: scale(1.15); }
+    .swatch.active::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      margin: 0 0 1.5rem;
+    }
+
+    /* ── Buttons ── */
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      height: 50px;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.15s, opacity 0.15s;
+      color: #fff;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary { background: #e879f9; }
+    .btn-secondary {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.14); }
+    .btn-full { grid-column: 1 / -1; }
+
+    /* ── Waiting step extras ── */
+    #player-list {
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+    #player-list li {
+      padding: .45rem .7rem;
+      margin-bottom: .35rem;
+      border-radius: 8px;
+      font-size: .9rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .waiting-hint {
+      font-size: .85rem;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .host-controls {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .host-controls label {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .9rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .host-controls select {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: .3rem .6rem;
+      font-size: .9rem;
+      outline: none;
+    }
+
+    /* ── Error ── */
+    #error-msg {
+      margin-top: 1rem;
+      font-size: .9rem;
+      color: #f87171;
+      text-align: center;
+      min-height: 1.2em;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+    }
+  </style>
 </head>
-<body class="lobby-page">
-  <div class="lobby-container">
-    <h1 class="logo">✏️ Drawable Trouble</h1>
-    <p class="tagline">Draw it. Guess it. Win it.</p>
+<body>
 
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <div class="container">
+
+    <!-- Brand -->
+    <div class="brand">
+      <div class="logo-row">
+        <div class="logo-mark" id="logoMark">
+          <svg width="36" height="36" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+            <path id="starGlow" d="M26 8 L29 20 L41 20 L31 28 L35 40 L26 33 L17 40 L21 28 L11 20 L23 20 Z" fill="#e879f9" opacity="0.25"/>
+            <path id="starFill" d="M26 12 L28.5 21 L38 21 L30.5 26.5 L33 36 L26 30.5 L19 36 L21.5 26.5 L14 21 L23.5 21 Z" fill="#e879f9"/>
+            <path d="M10 14 Q14 10 16 14" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M36 38 Q40 34 42 38" stroke="#f9a8d4" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <circle cx="10" cy="36" r="2" fill="#a78bfa"/>
+            <circle cx="42" cy="14" r="2" fill="#f9a8d4"/>
+          </svg>
+        </div>
+        <span class="brand-name" id="brandName">Drawable Trouble</span>
+      </div>
+      <span class="tagline">Draw it · Guess it · Win it</span>
+    </div>
+
+    <!-- Name step -->
     <div class="card" id="name-step">
-      <h2>What's your name?</h2>
-      <div class="name-row">
-        <input id="player-name" type="text" maxlength="20" placeholder="Your name..." autofocus />
-        <input id="player-color" type="color" value="#e94560" title="Pick your chat color" class="name-color-pick" />
-      </div>
+      <p class="card-heading">What's your name?</p>
+
+      <input
+        class="text-input"
+        type="text"
+        id="player-name"
+        maxlength="20"
+        placeholder="Your name..."
+        autocomplete="off"
+        autofocus
+      />
+
+      <div class="swatches" id="swatch-container" role="group" aria-label="Player color"></div>
+
+      <div class="divider"></div>
+
       <div class="btn-row">
-        <button id="btn-create" class="btn btn-primary">Create Room</button>
-        <button id="btn-join-toggle" class="btn btn-secondary">Join Room</button>
+        <button class="btn btn-primary" id="btn-create">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Create room
+        </button>
+        <button class="btn btn-secondary" id="btn-join-toggle">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          Join room
+        </button>
       </div>
     </div>
 
+    <!-- Join step -->
     <div class="card hidden" id="join-step">
-      <h2>Enter room code</h2>
-      <input id="room-code" type="text" maxlength="5" placeholder="XXXXX" style="text-transform:uppercase" />
+      <p class="card-heading">Enter room code</p>
+      <input
+        class="text-input"
+        type="text"
+        id="room-code"
+        maxlength="5"
+        placeholder="XXXXX"
+        style="text-transform:uppercase;letter-spacing:.2em;text-align:center;"
+        autocomplete="off"
+      />
       <div class="btn-row">
-        <button id="btn-join" class="btn btn-primary">Join</button>
-        <button id="btn-back" class="btn btn-secondary">Back</button>
+        <button class="btn btn-primary" id="btn-join">Join</button>
+        <button class="btn btn-secondary" id="btn-back">Back</button>
       </div>
     </div>
 
+    <!-- Waiting step -->
     <div class="card hidden" id="waiting-step">
-      <h2>Room <span id="display-code"></span></h2>
+      <p class="card-heading">Room <span id="display-code"></span></p>
       <p class="waiting-hint">Share this code with friends!</p>
       <ul id="player-list"></ul>
-      <div id="host-controls" class="hidden" style="margin-bottom:.75rem;display:flex;flex-direction:column;gap:.5rem;align-items:center;">
-        <label style="display:flex;align-items:center;justify-content:center;gap:.6rem;font-size:.9rem;color:var(--muted);">
+      <div id="host-controls" class="host-controls hidden">
+        <label>
           Rounds
-          <select id="rounds-select" style="background:var(--surface);color:var(--text);border:none;border-radius:6px;padding:.3rem .6rem;font-size:.9rem;">
+          <select id="rounds-select">
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3" selected>3</option>
@@ -47,9 +355,9 @@
             <option value="5">5</option>
           </select>
         </label>
-        <label style="display:flex;align-items:center;justify-content:center;gap:.6rem;font-size:.9rem;color:var(--muted);">
+        <label>
           Difficulty
-          <select id="difficulty-select" style="background:var(--surface);color:var(--text);border:none;border-radius:6px;padding:.3rem .6rem;font-size:.9rem;">
+          <select id="difficulty-select">
             <option value="easy">Easy</option>
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
@@ -57,13 +365,64 @@
           </select>
         </label>
       </div>
-      <button id="btn-start" class="btn btn-primary hidden">Start Game</button>
-      <p id="waiting-msg" class="muted">Waiting for the host to start...</p>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-full hidden" id="btn-start">Start Game</button>
+      </div>
+      <p id="waiting-msg" class="waiting-hint">Waiting for the host to start...</p>
     </div>
 
-    <p id="error-msg" class="error hidden"></p>
+    <p id="error-msg" class="hidden"></p>
+
+    <p class="footer">No account needed · Start instantly</p>
+
   </div>
 
+  <!-- Hidden input for lobby.js color compatibility -->
+  <input type="hidden" id="player-color" value="#e879f9" />
+
+  <script>
+    const COLORS = [
+      '#f87171', '#fb923c', '#fbbf24', '#facc15',
+      '#a3e635', '#34d399', '#2dd4bf', '#38bdf8',
+      '#60a5fa', '#818cf8', '#a78bfa', '#e879f9',
+      '#f472b6', '#fb7185', '#94a3b8', '#e2e8f0',
+    ];
+
+    let activeIdx = 11; // default: fuchsia
+
+    const colorInput  = document.getElementById('player-color');
+    const brandName   = document.getElementById('brandName');
+    const starFill    = document.getElementById('starFill');
+    const starGlow    = document.getElementById('starGlow');
+    const btnCreate   = document.getElementById('btn-create');
+    const logoMark    = document.getElementById('logoMark');
+
+    function applyColor(color) {
+      colorInput.value                  = color;
+      brandName.style.color             = color;
+      starFill.setAttribute('fill', color);
+      starGlow.setAttribute('fill', color);
+      btnCreate.style.background        = color;
+      logoMark.style.borderColor        = color + '55';
+    }
+
+    const swatchContainer = document.getElementById('swatch-container');
+    COLORS.forEach((color, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'swatch' + (i === activeIdx ? ' active' : '');
+      btn.style.background = color;
+      btn.setAttribute('aria-label', 'Color ' + (i + 1));
+      btn.addEventListener('click', () => {
+        activeIdx = i;
+        document.querySelectorAll('.swatch').forEach((s, idx) => s.classList.toggle('active', idx === i));
+        applyColor(color);
+      });
+      swatchContainer.appendChild(btn);
+    });
+
+    applyColor(COLORS[activeIdx]);
+  </script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/lobby.js"></script>
 </body>
