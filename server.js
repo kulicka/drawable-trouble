@@ -137,10 +137,9 @@ io.on('connection', (socket) => {
 
     if (room.state === 'drawing') {
       const result = room.checkGuess(socket.id, text);
-      if (result === 'already') return;
-      if (result === 'wrong') {
-        io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, color: player.color, text });
-      } else {
+      if (result.result === 'already') return;
+
+      if (result.result === 'correct') {
         io.to(room.code).emit('correct-guess', {
           playerId: socket.id,
           name: player.name,
@@ -152,10 +151,18 @@ io.on('connection', (socket) => {
           clearInterval(room.timer);
           endTurn(room);
         }
+      } else {
+        io.to(room.code).emit('chat', {
+          playerId: socket.id, name: player.name, color: player.color,
+          text, penalty: result.penalty || 0,
+        });
+        if (result.hint) {
+          socket.emit('partial-hint', { hint: result.hint });
+        }
       }
     } else {
-      // Allow chat between turns (selecting / lobby)
-      io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, color: player.color, text });
+      // Allow chat between turns
+      io.to(room.code).emit('chat', { playerId: socket.id, name: player.name, color: player.color, text, penalty: 0 });
     }
   });
 
@@ -188,7 +195,7 @@ io.on('connection', (socket) => {
       round: room.round,
       maxRounds: room.maxRounds,
       state: room.state,
-      wordHint: room.state === 'drawing' && !isDrawer ? room.wordHint() : null,
+      wordHint: room.state === 'drawing' && !isDrawer ? room.playerHintFor(socket.id) : null,
       wordLength: room.currentWord ? room.currentWord.length : 0,
       isHostFlag: room.hostId === socket.id,
     });

@@ -121,7 +121,12 @@ socket.on('game-state', ({ players, drawerId, drawerName, round, maxRounds, stat
   if (state === 'selecting' && isDrawer) {
     wordDisplay.textContent = 'Choose a word!';
   } else if (state === 'drawing') {
-    wordDisplay.textContent = isDrawer ? '(your word)' : (wordHint || '_ '.repeat(wordLength).trim());
+    if (isDrawer) {
+      wordDisplay.textContent = '(your word)';
+    } else {
+      const blanks = wordHint || '_ '.repeat(wordLength).trim();
+      wordDisplay.textContent = `${blanks}  (${wordLength} letters)`;
+    }
   } else {
     wordDisplay.textContent = 'Waiting...';
   }
@@ -166,7 +171,13 @@ socket.on('your-word', (word) => {
 });
 
 socket.on('word-hint', ({ hint, length }) => {
-  wordDisplay.textContent = hint || '_ '.repeat(length).trim();
+  const blanks = hint || '_ '.repeat(length).trim();
+  wordDisplay.textContent = `${blanks}  (${length} letters)`;
+});
+
+socket.on('partial-hint', ({ hint }) => {
+  const length = hint.replace(/ /g, '').length;
+  wordDisplay.textContent = `${hint}  (${length} letters)`;
 });
 
 socket.on('draw', receiveStroke);
@@ -179,8 +190,9 @@ socket.on('timer', (seconds) => {
   if (seconds <= 10 && seconds > 0) playTickSound(seconds);
 });
 
-socket.on('chat', ({ name, color, text }) => {
-  addChat(`<span class="sender" style="color:${color || 'var(--accent2)'}">${name}:</span> ${text}`);
+socket.on('chat', ({ name, color, text, penalty }) => {
+  const penaltyTag = penalty ? ` <span class="penalty">-${penalty}pts</span>` : '';
+  addChat(`<span class="sender" style="color:${color || 'var(--accent2)'}">${name}:</span> ${text}${penaltyTag}`);
 });
 
 socket.on('correct-guess', ({ name, color, points, players }) => {

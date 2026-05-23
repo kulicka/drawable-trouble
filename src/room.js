@@ -58,24 +58,55 @@ class Room {
     this.state = 'drawing';
     this.secondsLeft = TURN_DURATION;
     this.players.forEach(p => { p.hasGuessed = false; });
+    // Per-player revealed-letter hints (start as all underscores)
+    this.playerHints = new Map();
+    this.players.forEach((_, id) => {
+      if (id !== this.drawerId) {
+        this.playerHints.set(id, Array(this.currentWord.length).fill('_'));
+      }
+    });
     return this.currentWord;
   }
 
   checkGuess(playerId, text) {
-    if (this.state !== 'drawing') return 'wrong';
-    if (playerId === this.drawerId) return 'wrong';
+    if (this.state !== 'drawing') return { result: 'wrong' };
+    if (playerId === this.drawerId) return { result: 'wrong' };
     const player = this.players.get(playerId);
-    if (!player || player.hasGuessed) return 'already';
-    if (text.toLowerCase().trim() === this.currentWord) {
+    if (!player) return { result: 'wrong' };
+    if (player.hasGuessed) return { result: 'already' };
+
+    const guess = text.toLowerCase().trim();
+
+    if (guess === this.currentWord) {
       player.hasGuessed = true;
       const points = Math.max(POINTS_MIN, Math.round((this.secondsLeft / TURN_DURATION) * POINTS_MAX));
       player.score += points;
-      // Reward drawer too
       const drawer = this.players.get(this.drawerId);
       if (drawer) drawer.score += 10;
       return { result: 'correct', points };
     }
-    return 'wrong';
+
+    // Same-length wrong guess: reveal matching positions and apply penalty
+    if (guess.length === this.currentWord.length) {
+      const PENALTY = 15;
+      player.score = Math.max(0, player.score - PENALTY);
+
+      const hint = this.playerHints.get(playerId) || Array(this.currentWord.length).fill('_');
+      for (let i = 0; i < this.currentWord.length; i++) {
+        if (guess[i] === this.currentWord[i]) hint[i] = this.currentWord[i];
+      }
+      this.playerHints.set(playerId, hint);
+
+      return { result: 'wrong', penalty: PENALTY, hint: hint.join(' ') };
+    }
+
+    return { result: 'wrong', penalty: 0, hint: null };
+  }
+
+  playerHintFor(playerId) {
+    if (!this.playerHints) return this.wordHint();
+    const hint = this.playerHints.get(playerId);
+    return hint ? hint.join(' ') : this.wordHint();
   }
 
   allGuessed() {
