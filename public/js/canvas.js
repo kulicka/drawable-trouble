@@ -9,6 +9,31 @@ let erasing = false;
 let lastX = 0, lastY = 0;
 let drawController = null;
 
+const MAX_HISTORY = 30;
+const drawerHistory = [];
+const guesserHistory = [];
+
+function pushDrawerHistory() {
+  drawerHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+  if (drawerHistory.length > MAX_HISTORY) drawerHistory.shift();
+}
+
+function pushGuesserHistory() {
+  guesserHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+  if (guesserHistory.length > MAX_HISTORY) guesserHistory.shift();
+}
+
+function undoDrawer(socket) {
+  if (!isDrawer || drawerHistory.length === 0) return;
+  ctx.putImageData(drawerHistory.pop(), 0, 0);
+  socket.emit('undo');
+}
+
+function applyGuesserUndo() {
+  if (guesserHistory.length === 0) return;
+  ctx.putImageData(guesserHistory.pop(), 0, 0);
+}
+
 const COLORS = ['#000000','#ffffff','#e94560','#ff9800','#ffeb3b','#4caf50','#2196f3','#9c27b0','#795548','#607d8b'];
 
 function initToolbar() {
@@ -78,6 +103,8 @@ function drawSegment(x0, y0, x1, y1, c, size, erase) {
 }
 
 function clearCanvas() {
+  drawerHistory.length = 0;
+  guesserHistory.length = 0;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -93,6 +120,8 @@ function enableDrawing(socket) {
 
   function start(e) {
     e.preventDefault();
+    pushDrawerHistory();
+    socket.emit('stroke-start');
     drawing = true;
     const { x, y } = getPos(e);
     lastX = x; lastY = y;

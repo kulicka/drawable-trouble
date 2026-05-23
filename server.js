@@ -132,6 +132,18 @@ io.on('connection', (socket) => {
     socket.to(room.code).emit('canvas-cleared');
   });
 
+  socket.on('stroke-start', () => {
+    const room = [...rooms.values()].find(r => r.players.has(socket.id));
+    if (!room || room.drawerId !== socket.id) return;
+    socket.to(room.code).emit('stroke-start');
+  });
+
+  socket.on('undo', () => {
+    const room = [...rooms.values()].find(r => r.drawerId === socket.id);
+    if (!room) return;
+    socket.to(room.code).emit('undo');
+  });
+
   socket.on('guess', ({ text }) => {
     const room = [...rooms.values()].find(r => r.players.has(socket.id));
     if (!room) return;

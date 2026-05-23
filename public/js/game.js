@@ -58,6 +58,7 @@ const turnOverlayText= document.getElementById('turn-overlay-text');
 const btnPlayAgain        = document.getElementById('btn-play-again');
 const playAgainControls   = document.getElementById('play-again-controls');
 const toolbar        = document.getElementById('toolbar');
+const btnUndo        = document.getElementById('btn-undo');
 
 let myId = sessionStorage.getItem('playerId');
 let myDrawer = false;
@@ -250,6 +251,19 @@ socket.on('you-are-host', () => {
 });
 
 socket.on('error', (msg) => addChat(`⚠️ ${msg}`, 'system'));
+
+btnUndo.addEventListener('click', () => {
+  if (!myDrawer) return;
+  undoDrawer(socket);
+});
+
+socket.on('stroke-start', () => {
+  if (!myDrawer) pushGuesserHistory();
+});
+
+socket.on('undo', () => {
+  if (!myDrawer) applyGuesserUndo();
+});
 
 btnPlayAgain.addEventListener('click', () => {
   const rounds = parseInt(document.getElementById('rounds-select-game').value) || 3;
