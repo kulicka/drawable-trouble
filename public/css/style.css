@@ -62,15 +62,50 @@ input[type="text"] {
 .round-display { font-size: .8rem; color: var(--muted); text-align: center; margin-top: .1rem; }
 .timer { font-size: 1.6rem; font-weight: 700; color: var(--accent); min-width: 2.5ch; text-align: right; }
 
-.game-main { display: flex; flex: 1; overflow: hidden; }
+.game-main { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-/* Players panel */
-.players-panel { width: 240px; background: var(--surface); padding: .75rem; overflow-y: auto; flex-shrink: 0; }
+/* ── Panel backdrop (mobile) ── */
+#panel-backdrop {
+  display: none; position: absolute; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 9; cursor: pointer;
+}
+#panel-backdrop.active { display: block; }
+
+/* ── Panel toggle button ── */
+.panel-toggle-btn {
+  width: 24px; flex-shrink: 0; background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); padding: 0; align-self: stretch;
+}
+.panel-toggle-btn:hover { color: var(--text); background: rgba(255,255,255,.04); }
+.chevron-icon { transition: transform 0.25s; flex-shrink: 0; }
+
+/* ── Mobile header buttons (hidden on desktop) ── */
+.mob-panel-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 34px; height: 34px; background: none; border: none;
+  color: var(--text); cursor: pointer; border-radius: 6px; flex-shrink: 0;
+}
+.mob-panel-btn:hover { background: rgba(255,255,255,.08); }
+
+/* ── Players panel ── */
+.players-panel {
+  width: 240px; background: var(--surface); flex-shrink: 0;
+  display: flex; flex-direction: row; overflow: hidden;
+  transition: width 0.25s ease;
+}
+.players-panel .panel-body { flex: 1; overflow-y: auto; padding: .75rem; min-width: 0; transition: opacity 0.15s; }
 .players-panel ul { list-style: none; }
 .players-panel li { padding: .4rem .5rem; margin-bottom: .3rem; border-radius: 6px; font-size: .85rem; background: var(--card); }
 .players-panel li.is-drawer { border-left: 3px solid var(--accent); }
 .players-panel li.guessed { opacity: .5; }
 .player-score { float: right; color: var(--accent); font-weight: 700; }
+.players-panel .panel-toggle-btn { border-left: 1px solid var(--card); }
+
+/* Players collapsed (desktop) */
+.players-panel.collapsed { width: 24px; }
+.players-panel.collapsed .panel-body { opacity: 0; pointer-events: none; overflow: hidden; }
+.players-panel.collapsed .chevron-icon { transform: scaleX(-1); }
 
 /* Canvas section */
 .canvas-section { flex: 1; display: flex; flex-direction: column; align-items: center; padding: .75rem; gap: .5rem; overflow: hidden; min-width: 0; }
@@ -108,8 +143,14 @@ input[type="color"] { width: 32px; height: 32px; padding: 0; border: none; borde
 label { color: var(--muted); font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
 input[type="range"] { width: 80px; accent-color: var(--accent); }
 
-/* Chat */
-.chat-panel { width: 240px; background: var(--surface); display: flex; flex-direction: column; flex-shrink: 0; border-left: 2px solid var(--card); }
+/* ── Chat panel ── */
+.chat-panel {
+  width: 240px; background: var(--surface); flex-shrink: 0;
+  display: flex; flex-direction: row; overflow: hidden;
+  border-left: 2px solid var(--card); transition: width 0.25s ease;
+}
+.chat-panel .panel-body { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; transition: opacity 0.15s; }
+.chat-panel .panel-toggle-btn { border-right: 1px solid var(--card); }
 .chat-messages { flex: 1; overflow-y: auto; padding: .75rem; display: flex; flex-direction: column; gap: .4rem; }
 .chat-msg { font-size: .85rem; line-height: 1.4; }
 .chat-msg .sender { font-weight: 700; }
@@ -119,3 +160,39 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 .chat-form { display: flex; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
 .chat-form input { flex: 1; padding: .5rem .75rem; border: none; border-radius: 6px; background: var(--bg); color: var(--text); font-size: .9rem; }
 .chat-form .btn { padding: .5rem .9rem; font-size: .85rem; }
+
+/* Chat collapsed (desktop) */
+.chat-panel.collapsed { width: 24px; border-left-color: var(--card); }
+.chat-panel.collapsed .panel-body { opacity: 0; pointer-events: none; overflow: hidden; }
+.chat-panel.collapsed .chevron-icon { transform: scaleX(-1); }
+
+/* ── Mobile layout ── */
+@media (max-width: 767px) {
+  .mob-panel-btn { display: flex; }
+
+  /* Panels become slide-in overlays */
+  .players-panel, .chat-panel {
+    position: absolute; top: 0; bottom: 0; z-index: 10;
+    width: 260px !important; transition: transform 0.25s ease !important;
+  }
+  .players-panel {
+    left: 0; transform: translateX(-100%);
+    border-right: 2px solid var(--card);
+  }
+  .players-panel.mobile-open { transform: translateX(0); }
+
+  .chat-panel {
+    right: 0; transform: translateX(100%);
+  }
+  .chat-panel.mobile-open { transform: translateX(0); }
+
+  /* Hide the in-panel toggle strips on mobile */
+  .panel-toggle-btn { display: none; }
+
+  /* Canvas takes full width (panels removed from flow) */
+  .canvas-section { width: 100%; }
+
+  /* Compact toolbar on mobile */
+  .toolbar { gap: .4rem; padding: .4rem .5rem; }
+  input[type="range"] { width: 60px; }
+}

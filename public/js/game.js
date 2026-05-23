@@ -280,3 +280,40 @@ socket.on('turn-ended', () => {
   chatInput.placeholder = 'Type your guess...';
   chatInput.disabled = false;
 });
+
+// ── Panel toggles ──
+(function () {
+  const playersPanel = document.getElementById('players-panel');
+  const chatPanel    = document.getElementById('chat-panel');
+  const backdrop     = document.getElementById('panel-backdrop');
+
+  function isMobile() { return window.innerWidth < 768; }
+
+  function togglePanel(panel, other) {
+    if (isMobile()) {
+      const opening = !panel.classList.contains('mobile-open');
+      panel.classList.toggle('mobile-open', opening);
+      other.classList.remove('mobile-open');
+      backdrop.classList.toggle('active', opening);
+    } else {
+      panel.classList.toggle('collapsed');
+    }
+  }
+
+  document.getElementById('toggle-players').addEventListener('click',   () => togglePanel(playersPanel, chatPanel));
+  document.getElementById('toggle-chat').addEventListener('click',       () => togglePanel(chatPanel, playersPanel));
+  document.getElementById('mob-players-btn').addEventListener('click',  () => togglePanel(playersPanel, chatPanel));
+  document.getElementById('mob-chat-btn').addEventListener('click',     () => togglePanel(chatPanel, playersPanel));
+
+  backdrop.addEventListener('click', () => {
+    playersPanel.classList.remove('mobile-open');
+    chatPanel.classList.remove('mobile-open');
+    backdrop.classList.remove('active');
+  });
+
+  // Start with both panels collapsed on mobile
+  if (isMobile()) {
+    playersPanel.classList.remove('collapsed');
+    chatPanel.classList.remove('collapsed');
+  }
+})();

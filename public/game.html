@@ -10,6 +10,12 @@
 
   <header class="game-header">
     <div class="header-left">
+      <button class="mob-panel-btn" id="mob-players-btn" aria-label="Toggle players">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </button>
       <span class="logo-small">✏️ Drawable Trouble</span>
     </div>
     <div class="header-center">
@@ -18,13 +24,27 @@
     </div>
     <div class="header-right">
       <div id="timer" class="timer">--</div>
+      <button class="mob-panel-btn" id="mob-chat-btn" aria-label="Toggle chat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </button>
     </div>
   </header>
 
   <main class="game-main">
 
-    <aside class="players-panel">
-      <ul id="player-list"></ul>
+    <div id="panel-backdrop"></div>
+
+    <aside class="players-panel" id="players-panel">
+      <div class="panel-body">
+        <ul id="player-list"></ul>
+      </div>
+      <button class="panel-toggle-btn" id="toggle-players" aria-label="Toggle players panel">
+        <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
     </aside>
 
     <section class="canvas-section">
@@ -73,12 +93,19 @@
       </div>
     </section>
 
-    <aside class="chat-panel">
-      <div id="chat-messages" class="chat-messages"></div>
-      <form id="chat-form" class="chat-form">
-        <input id="chat-input" type="text" placeholder="Type your guess..." maxlength="100" autocomplete="off" />
-        <button type="submit" class="btn btn-primary">Send</button>
-      </form>
+    <aside class="chat-panel" id="chat-panel">
+      <button class="panel-toggle-btn" id="toggle-chat" aria-label="Toggle chat panel">
+        <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+      <div class="panel-body">
+        <div id="chat-messages" class="chat-messages"></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" type="text" placeholder="Type your guess..." maxlength="100" autocomplete="off" />
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      </div>
     </aside>
 
   </main>
