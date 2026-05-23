@@ -136,9 +136,10 @@ socket.on('game-state', ({ players, drawerId, drawerName, round, maxRounds, stat
   }
 });
 
-socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength }) => {
+socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength, players }) => {
   clearCanvas();
   roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
+  if (players) renderPlayers(players, drawerId);
 
   if (socket.id === drawerId) {
     wordDisplay.textContent = 'Choose a word!';
@@ -214,12 +215,12 @@ socket.on('turn-ended', ({ word, players }) => {
 socket.on('player-joined', ({ players }) => renderPlayers(players, null));
 socket.on('player-left',   ({ players }) => renderPlayers(players, null));
 
-socket.on('game-started', ({ drawerId, drawerName, round, maxRounds }) => {
+socket.on('game-started', ({ drawerId, drawerName, round, maxRounds, players }) => {
   playAgainControls.classList.add('hidden');
   turnOverlay.classList.add('hidden');
   clearCanvas();
   roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
-  renderPlayers([], drawerId);
+  renderPlayers(players || [], drawerId);
   chatInput.placeholder = 'Type your guess...';
   chatInput.disabled = false;
   if (socket.id === drawerId) {

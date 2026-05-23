@@ -51,6 +51,7 @@ function endTurn(room) {
       round: room.round,
       maxRounds: room.maxRounds,
       wordLength: 0,
+      players: room.getPublicPlayers(),
     });
     io.to(drawerId).emit('word-options', words);
   }, 4000);
@@ -89,6 +90,7 @@ io.on('connection', (socket) => {
       drawerName: room.players.get(drawerId)?.name,
       round: room.round,
       maxRounds: room.maxRounds,
+      players: room.getPublicPlayers(),
     });
     io.to(drawerId).emit('word-options', words);
   });
@@ -104,6 +106,7 @@ io.on('connection', (socket) => {
       drawerName: room.players.get(drawerId)?.name,
       round: room.round,
       maxRounds: room.maxRounds,
+      players: room.getPublicPlayers(),
     });
     io.to(drawerId).emit('word-options', words);
   });
