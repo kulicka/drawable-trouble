@@ -1,6 +1,6 @@
 # fly.toml — generated for drawable-trouble
 # Replace the app name below if "drawable-trouble" is already taken on Fly.io
-app = "drawable-trouble"
+app = "drawable-trouble-shy-sky-4269"
 primary_region = "iad"
 
 [build]
