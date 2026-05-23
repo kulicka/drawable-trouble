@@ -142,6 +142,7 @@ socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength, pla
   if (players) renderPlayers(players, drawerId);
 
   if (socket.id === drawerId) {
+    turnOverlay.classList.add('hidden');
     wordDisplay.textContent = 'Choose a word!';
     setDrawerUI(true);
     // word-options arrives after this and will show the picker
@@ -154,6 +155,7 @@ socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength, pla
 });
 
 socket.on('word-options', (words) => {
+  turnOverlay.classList.add('hidden');
   wordOptions.innerHTML = '';
   words.forEach(w => {
     const btn = document.createElement('button');

@@ -7,6 +7,7 @@ let color = '#000000';
 let brushSize = 6;
 let erasing = false;
 let lastX = 0, lastY = 0;
+let drawController = null;
 
 const COLORS = ['#000000','#ffffff','#e94560','#ff9800','#ffeb3b','#4caf50','#2196f3','#9c27b0','#795548','#607d8b'];
 
@@ -83,6 +84,10 @@ function clearCanvas() {
 }
 
 function enableDrawing(socket) {
+  if (drawController) drawController.abort();
+  drawController = new AbortController();
+  const { signal } = drawController;
+
   isDrawer = true;
   canvas.style.cursor = 'crosshair';
 
@@ -105,17 +110,21 @@ function enableDrawing(socket) {
 
   function end(e) { e.preventDefault(); drawing = false; }
 
-  canvas.addEventListener('mousedown', start);
-  canvas.addEventListener('mousemove', move);
-  canvas.addEventListener('mouseup', end);
-  canvas.addEventListener('mouseleave', end);
-  canvas.addEventListener('touchstart', start, { passive: false });
-  canvas.addEventListener('touchmove', move, { passive: false });
-  canvas.addEventListener('touchend', end, { passive: false });
+  canvas.addEventListener('mousedown', start, { signal });
+  canvas.addEventListener('mousemove', move, { signal });
+  canvas.addEventListener('mouseup', end, { signal });
+  canvas.addEventListener('mouseleave', end, { signal });
+  canvas.addEventListener('touchstart', start, { passive: false, signal });
+  canvas.addEventListener('touchmove', move, { passive: false, signal });
+  canvas.addEventListener('touchend', end, { passive: false, signal });
 }
 
 function disableDrawing() {
+  if (drawController) { drawController.abort(); drawController = null; }
   isDrawer = false;
+  drawing = false;
+  erasing = false;
+  document.getElementById('btn-eraser').classList.remove('active');
   canvas.style.cursor = 'default';
 }
 
