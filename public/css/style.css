@@ -55,12 +55,20 @@ input[type="text"] {
 .game-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: .6rem 1.2rem; background: var(--surface); border-bottom: 2px solid var(--card);
-  flex-shrink: 0;
+  flex-shrink: 0; gap: .5rem;
 }
+.header-left, .header-right { display: flex; align-items: center; }
+.header-center { flex: 1; min-width: 0; text-align: center; }
 .logo-small { font-size: 1.1rem; font-weight: 700; }
-.word-display { font-size: 1.4rem; font-weight: 700; letter-spacing: .15em; }
+.word-display { font-size: 1.4rem; font-weight: 700; letter-spacing: .15em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .round-display { font-size: .8rem; color: var(--muted); text-align: center; margin-top: .1rem; }
 .timer { font-size: 1.6rem; font-weight: 700; color: var(--accent); min-width: 2.5ch; text-align: right; }
+.header-icon-btn {
+  display: none; background: transparent; border: none; color: var(--text);
+  font-size: 1.3rem; line-height: 1; cursor: pointer; padding: .3rem .4rem; border-radius: 6px;
+}
+.header-icon-btn:hover { background: rgba(255,255,255,.08); }
+.panel-backdrop { display: none; }
 
 .game-main { display: flex; flex: 1; overflow: hidden; }
 
@@ -119,3 +127,43 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 .chat-form { display: flex; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
 .chat-form input { flex: 1; padding: .5rem .75rem; border: none; border-radius: 6px; background: var(--bg); color: var(--text); font-size: .9rem; }
 .chat-form .btn { padding: .5rem .9rem; font-size: .85rem; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .game-header { padding: .5rem .6rem; gap: .4rem; }
+  .header-icon-btn { display: inline-flex; align-items: center; justify-content: center; }
+  .logo-small { font-size: .9rem; }
+  .header-left { display: none; }
+  .word-display { font-size: 1rem; letter-spacing: .08em; }
+  .round-display { font-size: .7rem; }
+  .timer { font-size: 1.2rem; min-width: 2ch; }
+
+  .game-main { position: relative; }
+
+  .players-panel, .chat-panel {
+    position: absolute; top: 0; bottom: 0; z-index: 20;
+    width: 80%; max-width: 280px;
+    transition: transform .25s ease;
+    box-shadow: 0 0 20px rgba(0,0,0,.4);
+  }
+  .players-panel { left: 0; transform: translateX(-100%); }
+  .chat-panel    { right: 0; left: auto; transform: translateX(100%); border-left: none; }
+  .players-panel.open, .chat-panel.open { transform: translateX(0); }
+
+  .panel-backdrop {
+    display: none; position: absolute; inset: 0; background: rgba(0,0,0,.4); z-index: 15;
+  }
+  .panel-backdrop.open { display: block; }
+
+  .canvas-section { padding: .5rem; gap: .4rem; }
+
+  .toolbar {
+    gap: .4rem; padding: .4rem .5rem; flex-wrap: nowrap;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .toolbar > * { flex-shrink: 0; }
+  .color-swatches { gap: .3rem; flex-wrap: nowrap; }
+  .swatch { width: 26px; height: 26px; border-width: 2px; }
+  input[type="range"] { width: 70px; }
+  .toolbar label { font-size: .8rem; gap: .3rem; }
+}
