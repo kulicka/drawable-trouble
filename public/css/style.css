@@ -129,6 +129,51 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 .chat-form .btn { padding: .5rem .9rem; font-size: .85rem; }
 
 /* ── MOBILE ── */
+@media (max-width: 640px) {
+  /* Lobby: top-aligned, tighter spacing, fits without wrapping */
+  .lobby-page { align-items: flex-start; }
+  .lobby-container { padding: 1.5rem 1rem 2rem; }
+  .logo { font-size: 2rem; margin-bottom: .2rem; }
+  .tagline { margin-bottom: 1.25rem; font-size: .9rem; }
+
+  .card { padding: 1.25rem 1rem; }
+  .card h2 { font-size: 1.15rem; margin-bottom: 1rem; }
+
+  input[type="text"] { padding: .7rem .9rem; }
+
+  .name-row { gap: .5rem; }
+  .name-color-pick { width: 48px; height: 48px; }
+
+  .btn-row { gap: .5rem; }
+  .btn-row .btn { flex: 1; min-width: 0; padding: .75rem .5rem; }
+
+  /* Host controls (rounds, difficulty) — uniform rows */
+  #host-controls { gap: .5rem !important; align-items: stretch !important; }
+  #host-controls label {
+    width: 100%;
+    justify-content: space-between !important;
+    background: var(--bg);
+    padding: .55rem .85rem;
+    border-radius: 8px;
+    font-size: .9rem !important;
+  }
+  #host-controls select { min-width: 6.5rem; }
+
+  /* Player list as soft pills, not underlines */
+  #player-list { margin-bottom: 1rem; }
+  #player-list li {
+    padding: .55rem .85rem;
+    background: var(--bg);
+    border: none;
+    border-radius: 8px;
+    margin-bottom: .35rem;
+    text-align: center;
+  }
+  .waiting-step #player-list li:last-child { margin-bottom: 0; }
+
+  #btn-start { width: 100%; }
+}
+
 @media (max-width: 768px) {
   .game-header { padding: .5rem .6rem; gap: .4rem; }
   .header-icon-btn { display: inline-flex; align-items: center; justify-content: center; }
