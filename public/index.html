@@ -257,27 +257,48 @@
     .host-controls {
       display: flex;
       flex-direction: column;
-      gap: .5rem;
-      align-items: center;
+      gap: .85rem;
       margin-bottom: 1rem;
     }
 
-    .host-controls label {
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      font-size: .9rem;
+    .control-group { display: flex; flex-direction: column; gap: .4rem; }
+
+    .control-label {
+      font-size: .8rem;
+      letter-spacing: .04em;
       color: rgba(255,255,255,0.5);
+      padding-left: 2px;
     }
 
-    .host-controls select {
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.15);
+    .option-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 11px;
+      padding: 4px;
+    }
+
+    .option-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.65);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: .6rem 0;
       border-radius: 8px;
-      padding: .3rem .6rem;
-      font-size: .9rem;
-      outline: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+      min-height: 36px;
+    }
+    .option-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .option-btn:active { transform: scale(0.97); }
+    .option-btn.active {
+      background: rgba(232,121,249,0.18);
+      color: #f0abfc;
+      box-shadow: inset 0 0 0 1px rgba(232,121,249,0.35);
     }
 
     /* ── Error ── */
@@ -321,15 +342,8 @@
 
       #player-list li { padding: .55rem .8rem; }
 
-      .host-controls { gap: .45rem !important; align-items: stretch !important; }
-      .host-controls label {
-        width: 100%;
-        justify-content: space-between !important;
-        background: rgba(255,255,255,0.04);
-        padding: .55rem .85rem;
-        border-radius: 10px;
-      }
-      .host-controls select { min-width: 6.5rem; padding: .35rem .55rem; }
+      .host-controls { gap: .7rem; }
+      .option-btn { font-size: 13px; padding: .55rem 0; min-height: 38px; }
 
       .footer { margin-top: 1rem; }
     }
@@ -430,25 +444,24 @@
       <p class="waiting-hint">Share this code with friends!</p>
       <ul id="player-list"></ul>
       <div id="host-controls" class="host-controls hidden">
-        <label>
-          Rounds
-          <select id="rounds-select">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </label>
-        <label>
-          Difficulty
-          <select id="difficulty-select">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-            <option value="mixed">Mixed</option>
-          </select>
-        </label>
+        <div class="control-group">
+          <span class="control-label">Rounds</span>
+          <div class="option-row" id="rounds-options" role="radiogroup" aria-label="Number of rounds">
+            <button type="button" class="option-btn" data-value="3">3</button>
+            <button type="button" class="option-btn active" data-value="5">5</button>
+            <button type="button" class="option-btn" data-value="7">7</button>
+            <button type="button" class="option-btn" data-value="10">10</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Difficulty</span>
+          <div class="option-row" id="difficulty-options" role="radiogroup" aria-label="Difficulty">
+            <button type="button" class="option-btn" data-value="easy">Easy</button>
+            <button type="button" class="option-btn" data-value="medium">Medium</button>
+            <button type="button" class="option-btn" data-value="hard">Hard</button>
+            <button type="button" class="option-btn active" data-value="mixed">Mixed</button>
+          </div>
+        </div>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary btn-full hidden" id="btn-start">Start Game</button>

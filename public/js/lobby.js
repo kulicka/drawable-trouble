@@ -65,9 +65,22 @@ btnJoin.addEventListener('click', () => {
   socket.emit('join-room', { code, playerName: name, playerColor });
 });
 
+function getSelectedOption(rowId) {
+  const active = document.querySelector('#' + rowId + ' .option-btn.active');
+  return active ? active.dataset.value : null;
+}
+
+document.querySelectorAll('.option-row').forEach(row => {
+  row.addEventListener('click', e => {
+    const btn = e.target.closest('.option-btn');
+    if (!btn || btn.classList.contains('active')) return;
+    row.querySelectorAll('.option-btn').forEach(b => b.classList.toggle('active', b === btn));
+  });
+});
+
 btnStart.addEventListener('click', () => {
-  const rounds = parseInt(document.getElementById('rounds-select').value) || 3;
-  const difficulty = document.getElementById('difficulty-select').value || 'medium';
+  const rounds = parseInt(getSelectedOption('rounds-options')) || 5;
+  const difficulty = getSelectedOption('difficulty-options') || 'mixed';
   socket.emit('start-game', { rounds, difficulty });
 });
 
