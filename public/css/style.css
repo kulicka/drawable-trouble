@@ -181,12 +181,31 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 
 /* ── Mobile layout ── */
 @media (max-width: 767px) {
-  .mob-panel-btn { display: flex; }
+  .mob-panel-btn { display: flex; width: 40px; height: 40px; }
+
+  /* Compact header — hide the cursive brand text, keep only the icon */
+  .game-header { padding: .45rem .55rem; gap: .35rem; }
+  .game-brand-name { display: none; }
+  .game-logo-mark { width: 32px; height: 32px; border-radius: 8px; }
+  .game-logo-mark svg { width: 20px; height: 20px; }
+  .header-left { gap: .3rem; }
+  .header-right { display: flex; align-items: center; gap: .3rem; }
+
+  /* Center column must shrink so siblings stay visible */
+  .header-center { flex: 1; min-width: 0; padding: 0 .25rem; text-align: center; }
+  .word-display {
+    font-size: 1rem; letter-spacing: .08em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .round-display { font-size: .7rem; }
+  .timer { font-size: 1.15rem; min-width: 2ch; }
 
   /* Panels become slide-in overlays */
   .players-panel, .chat-panel {
     position: absolute; top: 0; bottom: 0; z-index: 10;
-    width: 260px !important; transition: transform 0.25s ease !important;
+    width: 80% !important; max-width: 280px;
+    transition: transform 0.25s ease !important;
+    box-shadow: 0 0 24px rgba(0,0,0,.4);
   }
   .players-panel {
     left: 0; transform: translateX(-100%);
@@ -203,9 +222,30 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
   .panel-toggle-btn { display: none; }
 
   /* Canvas takes full width (panels removed from flow) */
-  .canvas-section { width: 100%; }
+  .canvas-section { width: 100%; padding: .5rem; gap: .4rem; }
 
-  /* Compact toolbar on mobile */
-  .toolbar { gap: .4rem; padding: .4rem .5rem; }
-  input[type="range"] { width: 60px; }
+  /* Toolbar: swatches scroll on row 1, tools stay visible on row 2 */
+  .toolbar {
+    gap: .35rem .5rem; padding: .45rem .55rem;
+    flex-wrap: wrap;
+  }
+  .color-swatches {
+    flex: 1 1 100%;
+    flex-wrap: nowrap; gap: .35rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 2px;
+  }
+  .color-swatches > * { flex-shrink: 0; }
+  .swatch { width: 32px; height: 32px; }
+  input[type="color"] { width: 36px; height: 36px; }
+  .tool-btn { padding: .4rem .65rem; font-size: 1.2rem; min-width: 40px; }
+  input[type="range"] { width: 70px; }
+  .toolbar label { font-size: .8rem; flex-shrink: 0; }
+  .toolbar > .divider { display: none; }
+
+  /* Word picker buttons stack on narrow screens */
+  .word-options { flex-direction: column; width: 80%; }
+  .word-options button { width: 100%; }
 }

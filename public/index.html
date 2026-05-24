@@ -259,7 +259,44 @@
       font-size: 11px;
       color: rgba(255,255,255,0.25);
     }
-  </style>
+
+    /* ── Mobile ── */
+    @media (max-width: 480px) {
+      body { align-items: flex-start; padding: 1.5rem 1rem 2rem; }
+      .orb1 { width: 380px; height: 380px; top: -120px; right: -80px; }
+      .orb2 { width: 260px; height: 260px; bottom: -60px; left: -50px; }
+
+      .brand { margin-bottom: 1.5rem; }
+      .logo-row { gap: 10px; }
+      .logo-mark { width: 44px; height: 44px; border-radius: 12px; }
+      .logo-mark svg { width: 30px; height: 30px; }
+      .brand-name { font-size: clamp(34px, 9.5vw, 42px); }
+      .tagline { font-size: 10px; }
+
+      .card { padding: 1.5rem 1.25rem; border-radius: 18px; }
+      .card-heading { font-size: 17px; margin-bottom: 1rem; }
+      .text-input { height: 46px; font-size: 16px; }
+
+      .swatches { gap: 6px; margin-bottom: 1.25rem; }
+      .divider { margin-bottom: 1.25rem; }
+
+      .btn { height: 48px; font-size: 14px; }
+
+      #player-list li { padding: .55rem .8rem; }
+
+      .host-controls { gap: .45rem !important; align-items: stretch !important; }
+      .host-controls label {
+        width: 100%;
+        justify-content: space-between !important;
+        background: rgba(255,255,255,0.04);
+        padding: .55rem .85rem;
+        border-radius: 10px;
+      }
+      .host-controls select { min-width: 6.5rem; padding: .35rem .55rem; }
+
+      .footer { margin-top: 1rem; }
+    }
+</style>
 </head>
 <body>
 
