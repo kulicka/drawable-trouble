@@ -71,6 +71,30 @@ btnStart.addEventListener('click', () => {
   socket.emit('start-game', { rounds, difficulty });
 });
 
+const btnCopyCode = document.getElementById('btn-copy-code');
+btnCopyCode?.addEventListener('click', async () => {
+  const code = displayCode.textContent.trim();
+  if (!code) return;
+  try {
+    await navigator.clipboard.writeText(code);
+  } catch (_) {
+    const ta = document.createElement('textarea');
+    ta.value = code;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    ta.remove();
+  }
+  btnCopyCode.classList.add('copied');
+  btnCopyCode.setAttribute('aria-label', 'Copied!');
+  setTimeout(() => {
+    btnCopyCode.classList.remove('copied');
+    btnCopyCode.setAttribute('aria-label', 'Copy room code');
+  }, 1500);
+});
+
 socket.on('room-created', ({ code, playerId, players }) => {
   myId = playerId;
   isHost = true;

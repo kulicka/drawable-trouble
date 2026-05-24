@@ -109,6 +109,43 @@
       margin-bottom: 1.25rem;
     }
 
+    /* ── Room code copy button ── */
+    .room-code-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .copy-btn {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 9px;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      position: relative;
+    }
+    .copy-btn:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+    .copy-btn:active { transform: scale(0.95); }
+    .copy-btn.copied {
+      background: rgba(74, 222, 128, 0.18);
+      border-color: rgba(74, 222, 128, 0.45);
+      color: #4ade80;
+    }
+    .copy-icon { display: block; }
+    .copy-btn .icon-check { display: none; }
+    .copy-btn.copied .icon-copy { display: none; }
+    .copy-btn.copied .icon-check { display: block; }
+
     /* ── Inputs ── */
     .text-input {
       width: 100%;
@@ -378,7 +415,18 @@
 
     <!-- Waiting step -->
     <div class="card hidden" id="waiting-step">
-      <p class="card-heading">Room <span id="display-code"></span></p>
+      <div class="card-heading room-code-row">
+        <span>Room <span id="display-code"></span></span>
+        <button id="btn-copy-code" class="copy-btn" type="button" aria-label="Copy room code" title="Copy code">
+          <svg class="copy-icon icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <svg class="copy-icon icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </button>
+      </div>
       <p class="waiting-hint">Share this code with friends!</p>
       <ul id="player-list"></ul>
       <div id="host-controls" class="host-controls hidden">
