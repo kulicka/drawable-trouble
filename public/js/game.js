@@ -248,29 +248,6 @@ socket.on('you-are-host', () => {
 
 socket.on('error', (msg) => addChat(`⚠️ ${msg}`, 'system'));
 
-// ── Mobile panel toggles ──
-const playersPanel  = document.getElementById('players-panel');
-const chatPanel     = document.getElementById('chat-panel');
-const panelBackdrop = document.getElementById('panel-backdrop');
-
-function closePanels() {
-  playersPanel.classList.remove('open');
-  chatPanel.classList.remove('open');
-  panelBackdrop.classList.remove('open');
-}
-function openPanel(panel) {
-  closePanels();
-  panel.classList.add('open');
-  panelBackdrop.classList.add('open');
-}
-document.getElementById('btn-toggle-players').addEventListener('click', () => {
-  playersPanel.classList.contains('open') ? closePanels() : openPanel(playersPanel);
-});
-document.getElementById('btn-toggle-chat').addEventListener('click', () => {
-  chatPanel.classList.contains('open') ? closePanels() : openPanel(chatPanel);
-});
-panelBackdrop.addEventListener('click', closePanels);
-
 btnPlayAgain.addEventListener('click', () => {
   const rounds = parseInt(document.getElementById('rounds-select-game').value) || 3;
   const difficulty = document.getElementById('difficulty-select-game').value || 'medium';
