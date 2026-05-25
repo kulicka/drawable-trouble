@@ -13,8 +13,13 @@ app.use(express.static('public'));
 
 const rooms = new Map(); // code → Room
 
+const CODE_ALPHABET = 'ABCDEFGHJKLMNOPRSTUVWXYZ123456789';
 function generateCode() {
-  return Math.random().toString(36).slice(2, 7).toUpperCase();
+  let code = '';
+  for (let i = 0; i < 5; i++) {
+    code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+  }
+  return code;
 }
 
 function startTurnTimer(room) {
