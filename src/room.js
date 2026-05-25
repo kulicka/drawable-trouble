@@ -50,6 +50,10 @@ class Room {
     this.maxRounds = maxRounds;
     this.difficulty = ['easy', 'medium', 'hard', 'mixed'].includes(difficulty) ? difficulty : 'medium';
     this.drawerOrder = [...this.players.keys()];
+    for (let i = this.drawerOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.drawerOrder[i], this.drawerOrder[j]] = [this.drawerOrder[j], this.drawerOrder[i]];
+    }
     this.drawerIndex = 0;
     this.players.forEach(p => { p.score = 0; p.hasGuessed = false; });
     return getRandomWords(3, this.difficulty);
