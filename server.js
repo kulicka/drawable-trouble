@@ -132,6 +132,12 @@ io.on('connection', (socket) => {
     socket.to(room.code).emit('draw', data);
   });
 
+  socket.on('fill', (data) => {
+    const room = [...rooms.values()].find(r => r.players.has(socket.id));
+    if (!room || room.drawerId !== socket.id) return;
+    socket.to(room.code).emit('fill', data);
+  });
+
   socket.on('clear-canvas', () => {
     const room = [...rooms.values()].find(r => r.drawerId === socket.id);
     if (!room) return;

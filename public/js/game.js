@@ -221,6 +221,7 @@ socket.on('partial-hint', ({ hint }) => {
 });
 
 socket.on('draw', receiveStroke);
+socket.on('fill', receiveFill);
 
 socket.on('canvas-cleared', clearCanvas);
 

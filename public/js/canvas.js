@@ -6,6 +6,7 @@ let isDrawer = false;
 let color = '#000000';
 let brushSize = 6;
 let erasing = false;
+let filling = false;
 let lastX = 0, lastY = 0;
 let drawController = null;
 
@@ -52,6 +53,15 @@ function initToolbar() {
     swatchContainer.appendChild(s);
   });
 
+  document.getElementById('btn-fill').addEventListener('click', () => {
+    filling = !filling;
+    document.getElementById('btn-fill').classList.toggle('active', filling);
+    if (filling) {
+      erasing = false;
+      document.getElementById('btn-eraser').classList.remove('active');
+    }
+  });
+
   document.getElementById('custom-color').addEventListener('input', e => {
     setColor(e.target.value);
     erasing = false;
@@ -64,6 +74,10 @@ function initToolbar() {
   document.getElementById('btn-eraser').addEventListener('click', () => {
     erasing = !erasing;
     document.getElementById('btn-eraser').classList.toggle('active', erasing);
+    if (erasing) {
+      filling = false;
+      document.getElementById('btn-fill').classList.remove('active');
+    }
   });
 
   document.getElementById('btn-clear').addEventListener('click', () => {
@@ -110,6 +124,45 @@ function clearCanvas() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+// Iterative flood fill (4-connectivity) with a small tolerance so anti-aliased
+// stroke edges don't leave halos. Operates on the canvas's internal 800x550 buffer.
+function floodFill(x, y, hex) {
+  x = Math.floor(x); y = Math.floor(y);
+  const w = canvas.width, h = canvas.height;
+  if (x < 0 || x >= w || y < 0 || y >= h) return;
+
+  const img = ctx.getImageData(0, 0, w, h);
+  const d = img.data;
+  const start = (y * w + x) * 4;
+  const tr = d[start], tg = d[start + 1], tb = d[start + 2], ta = d[start + 3];
+
+  const fr = parseInt(hex.slice(1, 3), 16);
+  const fg = parseInt(hex.slice(3, 5), 16);
+  const fb = parseInt(hex.slice(5, 7), 16);
+  if (tr === fr && tg === fg && tb === fb && ta === 255) return;
+
+  const TOL = 8;
+  const matches = (i) =>
+    Math.abs(d[i] - tr) <= TOL &&
+    Math.abs(d[i + 1] - tg) <= TOL &&
+    Math.abs(d[i + 2] - tb) <= TOL &&
+    Math.abs(d[i + 3] - ta) <= TOL;
+
+  const stack = [x, y];
+  while (stack.length) {
+    const cy = stack.pop(), cx = stack.pop();
+    if (cx < 0 || cx >= w || cy < 0 || cy >= h) continue;
+    const i = (cy * w + cx) * 4;
+    if (!matches(i)) continue;
+    d[i] = fr; d[i + 1] = fg; d[i + 2] = fb; d[i + 3] = 255;
+    stack.push(cx + 1, cy);
+    stack.push(cx - 1, cy);
+    stack.push(cx, cy + 1);
+    stack.push(cx, cy - 1);
+  }
+  ctx.putImageData(img, 0, 0);
+}
+
 function enableDrawing(socket) {
   if (drawController) drawController.abort();
   drawController = new AbortController();
@@ -120,10 +173,17 @@ function enableDrawing(socket) {
 
   function start(e) {
     e.preventDefault();
+    const { x, y } = getPos(e);
+    if (filling) {
+      pushDrawerHistory();
+      socket.emit('stroke-start');
+      floodFill(x, y, color);
+      socket.emit('fill', { x: Math.floor(x), y: Math.floor(y), color });
+      return;
+    }
     pushDrawerHistory();
     socket.emit('stroke-start');
     drawing = true;
-    const { x, y } = getPos(e);
     lastX = x; lastY = y;
   }
 
@@ -153,12 +213,18 @@ function disableDrawing() {
   isDrawer = false;
   drawing = false;
   erasing = false;
+  filling = false;
   document.getElementById('btn-eraser').classList.remove('active');
+  document.getElementById('btn-fill').classList.remove('active');
   canvas.style.cursor = 'default';
 }
 
 function receiveStroke(data) {
   drawSegment(data.x0, data.y0, data.x1, data.y1, data.color, data.size, data.erase);
+}
+
+function receiveFill(data) {
+  floodFill(data.x, data.y, data.color);
 }
 
 // Keep CSS size in sync with the wrapper, preserving the 800×550 aspect ratio.
