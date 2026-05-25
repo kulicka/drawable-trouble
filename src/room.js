@@ -15,6 +15,7 @@ class Room {
     this.difficulty = 'medium';
     this.drawerIndex = -1;
     this.drawerOrder = [];
+    this.usedWords = new Set();
     this.currentWord = null;
     this.timer = null;
     this.secondsLeft = 0;
@@ -56,11 +57,13 @@ class Room {
     }
     this.drawerIndex = 0;
     this.players.forEach(p => { p.score = 0; p.hasGuessed = false; });
+    this.usedWords = new Set();
     return getRandomWords(3, this.difficulty);
   }
 
   selectWord(word) {
     this.currentWord = word.toLowerCase();
+    this.usedWords.add(this.currentWord);
     this.state = 'drawing';
     this.secondsLeft = TURN_DURATION;
     this.players.forEach(p => { p.hasGuessed = false; });

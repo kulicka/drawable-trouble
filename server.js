@@ -49,7 +49,7 @@ function endTurn(room) {
       return;
     }
     const drawerId = room.drawerId;
-    const words = getRandomWords(3, room.difficulty);
+    const words = getRandomWords(3, room.difficulty, [...room.usedWords]);
     io.to(room.code).emit('new-turn', {
       drawerId,
       drawerName: room.players.get(drawerId)?.name,
@@ -222,7 +222,7 @@ io.on('connection', (socket) => {
     });
 
     if (isDrawer && room.state === 'selecting') {
-      socket.emit('word-options', getRandomWords(3));
+      socket.emit('word-options', getRandomWords(3, room.difficulty, [...room.usedWords]));
     }
     if (isDrawer && room.state === 'drawing') {
       socket.emit('your-word', room.currentWord);

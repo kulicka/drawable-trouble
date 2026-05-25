@@ -75,14 +75,18 @@ const wordsByDifficulty = {
   ],
 };
 
-function getRandomWords(count = 3, difficulty = 'medium') {
+function getRandomWords(count = 3, difficulty = 'medium', exclude = []) {
   const pool = wordsByDifficulty[difficulty] || [
     ...wordsByDifficulty.easy,
     ...wordsByDifficulty.medium,
     ...wordsByDifficulty.hard,
   ];
-  const shuffled = [...new Set(pool)].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+  const unique = [...new Set(pool)];
+  const excludeSet = new Set(exclude);
+  const available = unique.filter(w => !excludeSet.has(w));
+  // If exclusion would leave fewer than `count`, fall back to the full pool.
+  const useList = available.length >= count ? available : unique;
+  return [...useList].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
 module.exports = { getRandomWords };
