@@ -18,6 +18,9 @@ const waitingMsg      = document.getElementById('waiting-msg');
 let myId = null;
 let isHost = false;
 
+const savedName = localStorage.getItem('playerName');
+if (savedName) playerNameInput.value = savedName;
+
 function showError(msg) {
   errorMsg.textContent = msg;
   errorMsg.classList.remove('hidden');
@@ -42,6 +45,8 @@ btnCreate.addEventListener('click', () => {
   const name = playerNameInput.value.trim();
   if (!name) return showError('Please enter your name.');
   const playerColor = document.getElementById('player-color').value;
+  localStorage.setItem('playerName', name);
+  localStorage.setItem('playerColor', playerColor);
   sessionStorage.setItem('playerColor', playerColor);
   socket.emit('create-room', { playerName: name, playerColor });
 });
@@ -61,6 +66,8 @@ btnJoin.addEventListener('click', () => {
   const code = roomCodeInput.value.trim().toUpperCase();
   if (!code) return showError('Please enter a room code.');
   const playerColor = document.getElementById('player-color').value;
+  localStorage.setItem('playerName', name);
+  localStorage.setItem('playerColor', playerColor);
   sessionStorage.setItem('playerColor', playerColor);
   socket.emit('join-room', { code, playerName: name, playerColor });
 });

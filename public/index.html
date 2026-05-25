@@ -502,7 +502,9 @@
         '#f472b6', '#fb7185', '#94a3b8', '#e2e8f0',
       ];
 
-      let activeIdx = 11; // default: fuchsia
+      const savedColor = localStorage.getItem('playerColor');
+      const savedIdx = savedColor ? COLORS.indexOf(savedColor) : -1;
+      let activeIdx = savedIdx !== -1 ? savedIdx : 11; // default: fuchsia
 
       const colorInput  = document.getElementById('player-color');
       const brandName   = document.getElementById('brandName');
@@ -531,6 +533,7 @@
           activeIdx = i;
           document.querySelectorAll('.swatch').forEach((s, idx) => s.classList.toggle('active', idx === i));
           applyColor(color);
+          localStorage.setItem('playerColor', color);
         });
         swatchContainer.appendChild(btn);
       });
