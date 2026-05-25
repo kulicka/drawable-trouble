@@ -218,21 +218,19 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 .chat-panel.collapsed .panel-body { opacity: 0; pointer-events: none; overflow: hidden; }
 .chat-panel.collapsed .chevron-icon { transform: scaleX(-1); }
 
-/* ── Mobile layout ── */
+/* ── Mobile layout: stacked column ── */
 @media (max-width: 767px) {
-  .mob-panel-btn { display: flex; width: 40px; height: 40px; }
+  /* Header: compact, no slide-in toggles (panels are now always visible) */
+  .mob-panel-btn { display: none !important; }
+  #panel-backdrop { display: none !important; }
+  .panel-toggle-btn { display: none !important; }
 
-  /* Compact header — hide the cursive brand text, keep only the icon */
   .game-header { padding: .45rem .55rem; gap: .35rem; }
   .game-brand-name { display: none; }
   .game-logo-mark { width: 32px; height: 32px; border-radius: 8px; }
   .game-logo-mark svg { width: 20px; height: 20px; }
   .header-left { gap: .3rem; }
   .header-right { display: flex; align-items: center; gap: .3rem; }
-  .room-code-pill { padding: .25rem .45rem; font-size: .72rem; letter-spacing: .08em; gap: .25rem; }
-  .room-code-pill .room-code-icon { width: 11px; height: 11px; }
-
-  /* Center column must shrink so siblings stay visible */
   .header-center { flex: 1; min-width: 0; padding: 0 .25rem; text-align: center; }
   .word-display {
     font-size: 1rem; letter-spacing: .08em;
@@ -240,81 +238,113 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
   }
   .round-display { font-size: .7rem; }
   .timer { font-size: 1.15rem; min-width: 2ch; }
+  .room-code-pill { padding: .25rem .45rem; font-size: .72rem; letter-spacing: .08em; gap: .25rem; }
+  .room-code-pill .room-code-icon { width: 11px; height: 11px; }
 
-  /* Panels become slide-in overlays — force out of flow, leave room for fixed toolbar */
-  .players-panel, .chat-panel {
-    position: absolute !important;
-    top: 0; bottom: 96px !important; z-index: 20;
-    width: 85vw !important; max-width: 320px;
-    flex: 0 0 auto !important;
-    transition: transform 0.25s ease !important;
-    box-shadow: 0 0 24px rgba(0,0,0,.45);
+  /* Two-row grid: canvas/toolbar across the top, panels share the row below */
+  .game-main {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "canvas canvas"
+      "players chat";
+    gap: 4px;
+    padding: 4px;
+    overflow: hidden !important;
+    position: relative;
   }
-  .players-panel {
-    left: 0;
-    transform: translateX(-100%) !important;
-    border-right: 2px solid var(--card);
-  }
-  .players-panel.mobile-open { transform: translateX(0) !important; }
 
-  .chat-panel {
-    right: 0; left: auto;
-    transform: translateX(100%) !important;
-    border-left: none;
-  }
-  .chat-panel.mobile-open { transform: translateX(0) !important; }
-
-  /* Desktop "collapsed" state must not interfere on mobile */
-  .players-panel.collapsed, .chat-panel.collapsed { width: 85vw !important; }
-  .players-panel.collapsed .panel-body,
-  .chat-panel.collapsed .panel-body { opacity: 1 !important; pointer-events: auto !important; overflow: auto !important; }
-
-  /* Backdrop also stops above the toolbar */
-  #panel-backdrop { bottom: 96px !important; }
-
-  /* Hide the in-panel toggle strips on mobile */
-  .panel-toggle-btn { display: none !important; }
-
-  /* Canvas takes full width; leave bottom padding so the fixed toolbar doesn't cover the canvas */
   .canvas-section {
+    grid-area: canvas;
     width: 100% !important;
     min-width: 0 !important;
-    flex: 1 1 100% !important;
-    padding: .5rem .5rem 0 !important;
-    gap: 0;
+    flex: none !important;
+    padding: 0 !important;
+    gap: .35rem;
+    display: flex !important;
+    flex-direction: column !important;
   }
-  .canvas-wrapper { margin-bottom: 96px; }
 
-  /* Toolbar: pinned to viewport bottom, always visible above panels */
+  .canvas-wrapper {
+    width: 100%;
+    aspect-ratio: 800 / 550;
+    flex: 0 0 auto !important;
+    height: auto !important;
+    margin-bottom: 0 !important;
+    min-height: 0;
+  }
+
+  /* Drawing toolbar: inline below canvas, two rows */
   .toolbar {
-    position: fixed !important;
-    bottom: 0; left: 0; right: 0;
-    z-index: 30;
-    border-radius: 0;
-    width: auto !important;
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important; right: auto !important;
+    z-index: auto !important;
+    box-shadow: none !important;
+    border-radius: 8px;
     background: var(--surface);
-    box-shadow: 0 -2px 12px rgba(0,0,0,.3);
-    gap: .35rem .5rem;
-    padding: .45rem .55rem calc(.45rem + env(safe-area-inset-bottom, 0));
+    width: 100% !important;
+    gap: .35rem .45rem;
+    padding: .4rem .5rem;
     flex-wrap: wrap;
   }
   .color-swatches {
     flex: 1 1 100%;
-    flex-wrap: nowrap; gap: .35rem;
+    flex-wrap: nowrap; gap: .3rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     padding-bottom: 2px;
   }
   .color-swatches > * { flex-shrink: 0; }
-  .swatch { width: 32px; height: 32px; }
-  input[type="color"] { width: 36px; height: 36px; }
-  .tool-btn { padding: .4rem .65rem; font-size: 1.2rem; min-width: 40px; }
-  input[type="range"] { width: 70px; }
-  .toolbar label { font-size: .8rem; flex-shrink: 0; }
+  .swatch { width: 28px; height: 28px; }
+  input[type="color"] { width: 32px; height: 32px; }
+  .tool-btn { padding: .3rem .5rem; font-size: 1.05rem; min-width: 36px; }
+  input[type="range"] { width: 56px; }
+  .toolbar label { font-size: .78rem; flex-shrink: 0; }
   .toolbar > .divider { display: none; }
 
-  /* Word picker buttons stack on narrow screens */
+  /* Panels: side-by-side beneath canvas, always visible */
+  .players-panel, .chat-panel {
+    position: static !important;
+    transform: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    flex: none !important;
+    overflow: hidden;
+    display: flex !important;
+    flex-direction: column !important;
+    background: var(--surface);
+    border: 1px solid var(--card);
+    border-radius: 8px;
+  }
+  .players-panel { grid-area: players; }
+  .chat-panel   { grid-area: chat; border-left: 1px solid var(--card); }
+  .players-panel .panel-body,
+  .chat-panel .panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    padding: .5rem;
+  }
+  .players-panel.collapsed, .chat-panel.collapsed { width: 100% !important; }
+
+  /* Smaller chat input on compressed mobile panel */
+  .chat-form { padding: .35rem; gap: .3rem; }
+  .chat-form input { padding: .4rem .5rem; font-size: .85rem; }
+  .chat-form .btn { padding: .4rem .55rem; font-size: .8rem; }
+  .chat-messages { padding: .5rem; gap: .3rem; font-size: .8rem; }
+  .chat-msg { font-size: .8rem; line-height: 1.35; }
+
+  .players-panel li { padding: .35rem .45rem; font-size: .78rem; margin-bottom: .25rem; }
+  .btn-leave-room { padding: .4rem .55rem; font-size: .78rem; gap: .35rem; margin-bottom: .5rem; }
+
+  /* Word picker stacks on narrow screens */
   .word-options { flex-direction: column; width: 80%; }
   .word-options button { width: 100%; }
 }
