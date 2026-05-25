@@ -134,6 +134,28 @@ socket.on('room-joined', ({ code, playerId, players, inProgress }) => {
 
 socket.on('player-joined', ({ players }) => renderPlayers(players));
 
+socket.on('you-are-host', () => {
+  isHost = true;
+  btnStart.classList.remove('hidden');
+  document.getElementById('host-controls').classList.remove('hidden');
+  waitingMsg.classList.add('hidden');
+});
+
+const btnLeaveWaiting = document.getElementById('btn-leave-waiting');
+btnLeaveWaiting.addEventListener('click', () => {
+  socket.emit('leave-room');
+  sessionStorage.removeItem('playerId');
+  sessionStorage.removeItem('roomCode');
+  isHost = false;
+  myId = null;
+  waitingStep.classList.add('hidden');
+  btnStart.classList.add('hidden');
+  document.getElementById('host-controls').classList.add('hidden');
+  waitingMsg.classList.remove('hidden');
+  playerList.innerHTML = '';
+  nameStep.classList.remove('hidden');
+});
+
 socket.on('game-started', () => {
   sessionStorage.setItem('playerName', playerNameInput.value.trim() || 'Guest');
   sessionStorage.setItem('playerColor', document.getElementById('player-color').value);

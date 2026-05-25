@@ -310,6 +310,20 @@
       min-height: 1.2em;
     }
 
+    /* ── Back-to-lobby link ── */
+    .leave-link {
+      display: block; width: 100%;
+      background: none; border: none;
+      color: rgba(255,255,255,0.45);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 13px; font-weight: 600;
+      padding: .6rem; margin-top: .5rem;
+      cursor: pointer; text-align: center;
+      transition: color 0.15s;
+    }
+    .leave-link:hover { color: #fff; }
+    .leave-link:active { color: #e879f9; }
+
     /* ── Footer ── */
     .footer {
       text-align: center;
@@ -467,6 +481,7 @@
         <button class="btn btn-primary btn-full hidden" id="btn-start">Start Game</button>
       </div>
       <p id="waiting-msg" class="waiting-hint">Waiting for the host to start...</p>
+      <button id="btn-leave-waiting" class="leave-link" type="button">← Back to lobby</button>
     </div>
 
     <p id="error-msg" class="hidden"></p>

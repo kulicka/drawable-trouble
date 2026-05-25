@@ -232,12 +232,19 @@ io.on('connection', (socket) => {
   socket.on('leave-room', () => {
     for (const [code, room] of rooms) {
       if (!room.players.has(socket.id)) continue;
-      if (room.hostId === socket.id) return; // host can't leave via this path
+      // Host may only leave while still in the lobby; mid-game they must stay so the room has an owner.
+      if (room.hostId === socket.id && room.state !== 'lobby') return;
       const wasDrawer = room.drawerId === socket.id;
+      const wasHost = room.hostId === socket.id;
       room.removePlayer(socket.id);
       socket.leave(code);
 
       if (room.players.size === 0) { rooms.delete(code); return; }
+
+      if (wasHost) {
+        room.hostId = [...room.players.keys()][0];
+        io.to(room.hostId).emit('you-are-host');
+      }
 
       io.to(code).emit('player-left', { players: room.getPublicPlayers() });
 
