@@ -28,7 +28,14 @@ class Room {
 
   removePlayer(id) {
     this.players.delete(id);
-    this.drawerOrder = this.drawerOrder.filter(pid => pid !== id);
+    const idx = this.drawerOrder.indexOf(id);
+    if (idx === -1) return;
+    this.drawerOrder.splice(idx, 1);
+    // Keep the rotation pointer aligned so we don't skip a player after a removal.
+    // If the removed slot is at or before the current drawer, shift left.
+    // For the drawer themselves, the server calls endTurn afterwards which advances
+    // the pointer — decrementing here makes that advance land on the correct next player.
+    if (idx <= this.drawerIndex) this.drawerIndex--;
   }
 
   getPublicPlayers() {
