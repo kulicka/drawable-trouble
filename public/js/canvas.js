@@ -39,18 +39,42 @@ const COLORS = ['#000000','#ffffff','#e94560','#ff9800','#ffeb3b','#4caf50','#21
 
 function initToolbar() {
   const swatchContainer = document.getElementById('color-swatches');
+  const trigger = document.getElementById('color-picker-trigger');
+  const currentColorEl = document.getElementById('current-color');
+  const toolbarEl = document.getElementById('toolbar');
+
+  function updateCurrentColor(c) {
+    if (currentColorEl) currentColorEl.style.background = c;
+  }
+  function closeSwatchPopover() {
+    toolbarEl.classList.remove('swatches-open');
+    trigger.classList.remove('open');
+  }
+
   COLORS.forEach(c => {
     const s = document.createElement('div');
     s.className = 'swatch' + (c === color ? ' active' : '');
     s.style.background = c;
     s.addEventListener('click', () => {
       setColor(c);
+      updateCurrentColor(c);
       document.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
       s.classList.add('active');
       erasing = false;
       document.getElementById('btn-eraser').classList.remove('active');
+      closeSwatchPopover();
     });
     swatchContainer.appendChild(s);
+  });
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const opening = !toolbarEl.classList.contains('swatches-open');
+    toolbarEl.classList.toggle('swatches-open', opening);
+    trigger.classList.toggle('open', opening);
+  });
+  document.addEventListener('click', (e) => {
+    if (!toolbarEl.contains(e.target)) closeSwatchPopover();
   });
 
   document.getElementById('btn-fill').addEventListener('click', () => {
@@ -64,8 +88,11 @@ function initToolbar() {
 
   document.getElementById('custom-color').addEventListener('input', e => {
     setColor(e.target.value);
+    updateCurrentColor(e.target.value);
     erasing = false;
   });
+
+  updateCurrentColor(color);
 
   document.getElementById('brush-size').addEventListener('input', e => {
     brushSize = parseInt(e.target.value);

@@ -195,6 +195,26 @@ input[type="color"] { width: 32px; height: 32px; padding: 0; border: none; borde
 label { color: var(--muted); font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
 input[type="range"] { width: 80px; accent-color: var(--accent); }
 
+/* Current-color trigger (mobile only — hidden on desktop) */
+.color-picker-trigger {
+  display: none;
+  width: 36px; height: 36px; flex-shrink: 0;
+  background: var(--card);
+  border: 2px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  padding: 4px;
+  cursor: pointer;
+  align-items: center; justify-content: center;
+}
+.color-picker-trigger .current-color {
+  display: block;
+  width: 100%; height: 100%;
+  background: #000;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+}
+.color-picker-trigger.open { border-color: rgba(232,121,249,.6); }
+
 /* ── Chat panel ── */
 .chat-panel {
   width: 240px; background: var(--surface); flex-shrink: 0;
@@ -275,9 +295,9 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
     min-height: 0;
   }
 
-  /* Drawing toolbar: inline below canvas, two rows */
+  /* Drawing toolbar: single inline row below canvas, no wrap */
   .toolbar {
-    position: static !important;
+    position: relative !important;       /* anchor for the swatch popover */
     bottom: auto !important;
     left: auto !important; right: auto !important;
     z-index: auto !important;
@@ -287,18 +307,33 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
     width: 100% !important;
     gap: .35rem .45rem;
     padding: .4rem .5rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: visible;
   }
+
+  /* Show the trigger; swatches become a hidden popover above the toolbar */
+  .color-picker-trigger { display: inline-flex; }
   .color-swatches {
-    flex: 1 1 100%;
-    flex-wrap: nowrap; gap: .3rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    padding-bottom: 2px;
+    flex: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 6px; right: 6px;
+    background: var(--surface);
+    border: 1px solid var(--card);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 -6px 22px rgba(0,0,0,.5);
+    z-index: 50;
+    display: none;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    overflow: visible;
   }
-  .color-swatches > * { flex-shrink: 0; }
-  .swatch { width: 28px; height: 28px; }
+  .toolbar.swatches-open .color-swatches { display: grid; }
+  .toolbar.swatches-open .color-swatches .swatch {
+    width: 100%; height: auto; aspect-ratio: 1; border-width: 2.5px;
+  }
+
   input[type="color"] { width: 32px; height: 32px; }
   .tool-btn { padding: .3rem .5rem; font-size: 1.05rem; min-width: 36px; }
   input[type="range"] { width: 56px; }
