@@ -200,29 +200,44 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
   .round-display { font-size: .7rem; }
   .timer { font-size: 1.15rem; min-width: 2ch; }
 
-  /* Panels become slide-in overlays */
+  /* Panels become slide-in overlays — force out of flow */
   .players-panel, .chat-panel {
-    position: absolute; top: 0; bottom: 0; z-index: 10;
-    width: 80% !important; max-width: 280px;
+    position: absolute !important;
+    top: 0; bottom: 0; z-index: 20;
+    width: 85vw !important; max-width: 300px;
+    flex: 0 0 auto !important;
     transition: transform 0.25s ease !important;
-    box-shadow: 0 0 24px rgba(0,0,0,.4);
+    box-shadow: 0 0 24px rgba(0,0,0,.45);
   }
   .players-panel {
-    left: 0; transform: translateX(-100%);
+    left: 0;
+    transform: translateX(-100%) !important;
     border-right: 2px solid var(--card);
   }
-  .players-panel.mobile-open { transform: translateX(0); }
+  .players-panel.mobile-open { transform: translateX(0) !important; }
 
   .chat-panel {
-    right: 0; transform: translateX(100%);
+    right: 0; left: auto;
+    transform: translateX(100%) !important;
+    border-left: none;
   }
-  .chat-panel.mobile-open { transform: translateX(0); }
+  .chat-panel.mobile-open { transform: translateX(0) !important; }
+
+  /* Desktop "collapsed" state must not interfere on mobile */
+  .players-panel.collapsed, .chat-panel.collapsed { width: 85vw !important; }
+  .players-panel.collapsed .panel-body,
+  .chat-panel.collapsed .panel-body { opacity: 1 !important; pointer-events: auto !important; overflow: auto !important; }
 
   /* Hide the in-panel toggle strips on mobile */
-  .panel-toggle-btn { display: none; }
+  .panel-toggle-btn { display: none !important; }
 
-  /* Canvas takes full width (panels removed from flow) */
-  .canvas-section { width: 100%; padding: .5rem; gap: .4rem; }
+  /* Canvas takes full width regardless of panel state */
+  .canvas-section {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 100% !important;
+    padding: .5rem; gap: .4rem;
+  }
 
   /* Toolbar: swatches scroll on row 1, tools stay visible on row 2 */
   .toolbar {
