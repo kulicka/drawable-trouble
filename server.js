@@ -30,7 +30,11 @@ function startTurnTimer(room) {
     room.secondsLeft--;
     io.to(room.code).emit('timer', room.secondsLeft);
 
-    if (room.secondsLeft <= 0 || room.allGuessed()) {
+    // With only the drawer in the room there's nobody to "guess", so
+    // allGuessed() is trivially true and would end the turn instantly.
+    // Skip that branch when there's just one player.
+    const allGuessedAndOthersExist = room.players.size > 1 && room.allGuessed();
+    if (room.secondsLeft <= 0 || allGuessedAndOthersExist) {
       clearInterval(room.timer);
       endTurn(room);
     }
@@ -88,7 +92,7 @@ io.on('connection', (socket) => {
 
   socket.on('start-game', ({ rounds = 3, difficulty = 'medium' } = {}) => {
     const room = [...rooms.values()].find(r => r.hostId === socket.id);
-    if (!room || room.players.size < 2) return socket.emit('error', 'Need at least 2 players to start.');
+    if (!room) return;
     const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
     const drawerId = room.drawerId;
     io.to(room.code).emit('game-started', {
