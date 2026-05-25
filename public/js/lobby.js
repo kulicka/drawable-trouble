@@ -119,10 +119,16 @@ socket.on('room-created', ({ code, playerId, players }) => {
   waitingMsg.classList.add('hidden');
 });
 
-socket.on('room-joined', ({ code, playerId, players }) => {
+socket.on('room-joined', ({ code, playerId, players, inProgress }) => {
   myId = playerId;
   sessionStorage.setItem('playerId', playerId);
   sessionStorage.setItem('roomCode', code);
+  sessionStorage.setItem('playerName', playerNameInput.value.trim() || 'Guest');
+  sessionStorage.setItem('playerColor', document.getElementById('player-color').value);
+  if (inProgress) {
+    window.location.href = '/game.html';
+    return;
+  }
   goToWaiting(code, players);
 });
 

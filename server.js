@@ -71,12 +71,13 @@ io.on('connection', (socket) => {
   socket.on('join-room', ({ code, playerName, playerColor }) => {
     const room = rooms.get(code);
     if (!room) return socket.emit('error', 'Room not found.');
-    if (room.state !== 'lobby') return socket.emit('error', 'Game already in progress.');
     if (room.players.size >= 8) return socket.emit('error', 'Room is full.');
 
     room.addPlayer(socket.id, playerName, playerColor);
+    if (room.state !== 'lobby') room.drawerOrder.push(socket.id);
     socket.join(code);
-    socket.emit('room-joined', { code, playerId: socket.id, players: room.getPublicPlayers() });
+    const inProgress = room.state !== 'lobby';
+    socket.emit('room-joined', { code, playerId: socket.id, players: room.getPublicPlayers(), inProgress });
     socket.to(code).emit('player-joined', { players: room.getPublicPlayers() });
   });
 
@@ -220,6 +221,26 @@ io.on('connection', (socket) => {
     }
     if (isDrawer && room.state === 'drawing') {
       socket.emit('your-word', room.currentWord);
+    }
+  });
+
+  socket.on('leave-room', () => {
+    for (const [code, room] of rooms) {
+      if (!room.players.has(socket.id)) continue;
+      if (room.hostId === socket.id) return; // host can't leave via this path
+      const wasDrawer = room.drawerId === socket.id;
+      room.removePlayer(socket.id);
+      socket.leave(code);
+
+      if (room.players.size === 0) { rooms.delete(code); return; }
+
+      io.to(code).emit('player-left', { players: room.getPublicPlayers() });
+
+      if (wasDrawer && room.state === 'drawing') {
+        clearInterval(room.timer);
+        endTurn(room);
+      }
+      return;
     }
   });
 

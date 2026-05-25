@@ -6,7 +6,7 @@
   <title>Drawable Trouble</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=2026-05-25b" />
+  <link rel="stylesheet" href="/css/style.css?v=2026-05-25c" />
 </head>
 <body class="game-page">
 
@@ -31,6 +31,16 @@
         </div>
         <span class="game-brand-name">Drawable Trouble</span>
       </div>
+      <button class="room-code-pill" id="btn-copy-room-code" type="button" title="Copy room code">
+        <span id="game-room-code">—</span>
+        <svg class="room-code-icon icon-copy" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <svg class="room-code-icon icon-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </button>
     </div>
     <div class="header-center">
       <div id="word-display" class="word-display">Waiting...</div>
@@ -52,6 +62,14 @@
 
     <aside class="players-panel" id="players-panel">
       <div class="panel-body">
+        <button class="btn-leave-room hidden" id="btn-leave-room" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Leave room
+        </button>
         <ul id="player-list"></ul>
       </div>
       <button class="panel-toggle-btn" id="toggle-players" aria-label="Toggle players panel">

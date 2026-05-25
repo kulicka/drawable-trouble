@@ -59,10 +59,45 @@ const btnPlayAgain        = document.getElementById('btn-play-again');
 const playAgainControls   = document.getElementById('play-again-controls');
 const toolbar        = document.getElementById('toolbar');
 const btnUndo        = document.getElementById('btn-undo');
+const btnLeaveRoom   = document.getElementById('btn-leave-room');
+const btnCopyRoomCode= document.getElementById('btn-copy-room-code');
+const gameRoomCodeEl = document.getElementById('game-room-code');
 
 let myId = sessionStorage.getItem('playerId');
 let myDrawer = false;
 let isHost = false;
+
+const myRoomCode = sessionStorage.getItem('roomCode') || '';
+if (gameRoomCodeEl) gameRoomCodeEl.textContent = myRoomCode;
+
+function applyHostUI() {
+  btnLeaveRoom.classList.toggle('hidden', isHost);
+}
+
+btnCopyRoomCode?.addEventListener('click', async () => {
+  if (!myRoomCode) return;
+  try {
+    await navigator.clipboard.writeText(myRoomCode);
+  } catch (_) {
+    const ta = document.createElement('textarea');
+    ta.value = myRoomCode;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    ta.remove();
+  }
+  btnCopyRoomCode.classList.add('copied');
+  setTimeout(() => btnCopyRoomCode.classList.remove('copied'), 1500);
+});
+
+btnLeaveRoom?.addEventListener('click', () => {
+  if (isHost) return;
+  if (!confirm('Leave this room?')) return;
+  socket.emit('leave-room');
+  sessionStorage.removeItem('playerId');
+  sessionStorage.removeItem('roomCode');
+  window.location.href = '/';
+});
 
 function renderPlayers(players, drawerId) {
   playerListEl.innerHTML = players.map(p => `
@@ -113,6 +148,7 @@ socket.on('connect', () => {
 socket.on('game-state', ({ players, drawerId, drawerName, round, maxRounds, state, wordHint, wordLength, isHostFlag }) => {
   myId = socket.id; // socket.id changed after page navigation
   isHost = !!isHostFlag;
+  applyHostUI();
   roundDisplay.textContent = `Round ${round} of ${maxRounds}`;
   renderPlayers(players, drawerId);
 
@@ -247,6 +283,7 @@ socket.on('game-ended', ({ players }) => {
 
 socket.on('you-are-host', () => {
   isHost = true;
+  applyHostUI();
   addChat('You are now the host.', 'system');
 });
 
