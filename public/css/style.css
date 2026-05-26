@@ -53,11 +53,15 @@ input[type="text"] {
 .game-page { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
 .game-header {
-  display: flex; align-items: center; justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
   padding: .6rem 1.2rem; background: var(--surface); border-bottom: 2px solid var(--card);
-  flex-shrink: 0;
+  flex-shrink: 0; gap: .5rem;
 }
-.header-left { display: flex; align-items: center; gap: .5rem; }
+.header-left { display: flex; align-items: center; gap: .5rem; justify-self: start; min-width: 0; }
+.header-right { display: flex; align-items: center; justify-self: end; }
+.header-center { justify-self: center; min-width: 0; text-align: center; padding: 0 .25rem; }
 
 .game-logo { display: flex; align-items: center; gap: 8px; }
 
@@ -112,7 +116,16 @@ input[type="text"] {
 .btn-leave-room:active { transform: scale(.97); }
 .word-display { font-size: 1.4rem; font-weight: 700; letter-spacing: .15em; }
 .round-display { font-size: .8rem; color: var(--muted); text-align: center; margin-top: .1rem; }
-.timer { font-size: 1.6rem; font-weight: 700; color: var(--accent); min-width: 2.5ch; text-align: right; }
+.timer {
+  font-size: 1.6rem; font-weight: 700; color: var(--accent);
+  min-width: 2.5ch; text-align: center;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+  border-radius: 8px;
+  padding: .15rem .6rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
 
 .game-main { display: flex; flex: 1; overflow: hidden; position: relative; }
 
@@ -142,7 +155,8 @@ input[type="text"] {
 
 /* ── Players panel ── */
 .players-panel {
-  width: 240px; background: var(--surface); flex-shrink: 0;
+  width: 240px; flex-shrink: 0;
+  background: color-mix(in srgb, var(--accent2) 14%, var(--surface));
   display: flex; flex-direction: row; overflow: hidden;
   transition: width 0.25s ease;
 }
@@ -217,7 +231,8 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 
 /* ── Chat panel ── */
 .chat-panel {
-  width: 240px; background: var(--surface); flex-shrink: 0;
+  width: 240px; flex-shrink: 0;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
   display: flex; flex-direction: row; overflow: hidden;
   border-left: 2px solid var(--card); transition: width 0.25s ease;
 }
@@ -352,7 +367,6 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
     overflow: hidden;
     display: flex !important;
     flex-direction: column !important;
-    background: var(--surface);
     border: 1px solid var(--card);
     border-radius: 8px;
   }
