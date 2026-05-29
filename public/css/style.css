@@ -56,6 +56,9 @@ input[type="text"] {
   height: 100svh;                         /* always the smallest visible viewport */
   height: var(--app-vh, 100svh);          /* JS override via visualViewport if present */
   overflow: hidden;
+  /* Leave breathing room for the OS gesture pill / a Chrome bottom UI strip that
+     visualViewport.height occasionally over-reports past. */
+  padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
 }
 
 .game-header {
@@ -346,7 +349,6 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
       "players chat";
     gap: 8px;
     padding: 8px;
-    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
     overflow: hidden !important;
     position: relative;
     min-height: 0;
