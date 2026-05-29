@@ -52,8 +52,9 @@ input[type="text"] {
 /* ── GAME ── */
 .game-page {
   display: flex; flex-direction: column;
-  height: 100vh;   /* fallback for older browsers */
-  height: 100dvh;  /* tracks the actual usable viewport on mobile */
+  height: 100vh;                          /* fallback for very old browsers */
+  height: 100svh;                         /* always the smallest visible viewport */
+  height: var(--app-vh, 100svh);          /* JS override via visualViewport if present */
   overflow: hidden;
 }
 

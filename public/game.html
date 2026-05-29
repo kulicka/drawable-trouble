@@ -2,11 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Drawable Trouble</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=2026-05-29b" />
+  <link rel="stylesheet" href="/css/style.css?v=2026-05-29c" />
+  <script>
+    // Pin the page to the actual visible viewport on mobile Chrome.
+    // window.visualViewport.height excludes browser chrome AND any virtual
+    // keyboard, so it's more accurate than 100vh/100dvh in all states.
+    (function () {
+      function setAppVh() {
+        var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+        document.documentElement.style.setProperty('--app-vh', h + 'px');
+      }
+      setAppVh();
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', setAppVh);
+        window.visualViewport.addEventListener('scroll', setAppVh);
+      }
+      window.addEventListener('resize', setAppVh);
+      window.addEventListener('orientationchange', setAppVh);
+    })();
+  </script>
 </head>
 <body class="game-page">
 
