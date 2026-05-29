@@ -6,15 +6,25 @@
   <title>Drawable Trouble</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=2026-05-29e" />
+  <link rel="stylesheet" href="/css/style.css?v=2026-05-29f" />
   <script>
     // Pin the page to the actual visible viewport on mobile Chrome.
     // window.visualViewport.height excludes browser chrome AND any virtual
     // keyboard, so it's more accurate than 100vh/100dvh in all states.
     (function () {
+      var lastH = 0;
       function setAppVh() {
         var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
         document.documentElement.style.setProperty('--app-vh', h + 'px');
+        // iOS Safari sometimes leaves the page scrolled after the soft keyboard
+        // closes (visualViewport grew back), pushing the header above the
+        // viewport. Force-snap back to the top whenever the visible area
+        // expands or we get an orientation/resize event.
+        if (h > lastH || h === lastH) {
+          window.scrollTo(0, 0);
+          if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+        }
+        lastH = h;
       }
       setAppVh();
       if (window.visualViewport) {
@@ -23,6 +33,10 @@
       }
       window.addEventListener('resize', setAppVh);
       window.addEventListener('orientationchange', setAppVh);
+      // Also reset scroll when an input blurs (keyboard dismiss path)
+      document.addEventListener('focusout', function () {
+        setTimeout(setAppVh, 50);
+      });
     })();
   </script>
 </head>

@@ -51,6 +51,10 @@ input[type="text"] {
 
 /* ── GAME ── */
 .game-page {
+  /* Pin to viewport so iOS Safari can't scroll the page when the soft keyboard
+     opens for the chat input and leave the header drifted off the top. */
+  position: fixed;
+  inset: 0;
   display: flex; flex-direction: column;
   height: 100vh;                          /* fallback for very old browsers */
   height: 100svh;                         /* always the smallest visible viewport */
@@ -317,7 +321,7 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
 .chat-panel.collapsed .chevron-icon { transform: scaleX(-1); }
 
 /* ── Mobile layout: stacked column ── */
-@media (max-width: 767px) {
+@media (max-width: 820px) {
   /* Header: compact, no slide-in toggles (panels are now always visible) */
   .mob-panel-btn { display: none !important; }
   #panel-backdrop { display: none !important; }
