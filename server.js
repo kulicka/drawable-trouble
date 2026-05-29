@@ -219,7 +219,9 @@ io.on('connection', (socket) => {
       if (idx !== -1) room.drawerOrder[idx] = socket.id;
       if (room.hostId === playerId) room.hostId = socket.id;
     } else {
+      // Disconnect ran past the grace period — re-add and put back in rotation
       room.addPlayer(socket.id, playerName, playerColor);
+      if (room.state !== 'lobby') room.drawerOrder.push(socket.id);
     }
 
     socket.join(roomCode);
