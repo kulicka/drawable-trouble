@@ -56,9 +56,9 @@ input[type="text"] {
   height: 100svh;                         /* always the smallest visible viewport */
   height: var(--app-vh, 100svh);          /* JS override via visualViewport if present */
   overflow: hidden;
-  /* Leave breathing room for the OS gesture pill / a Chrome bottom UI strip that
-     visualViewport.height occasionally over-reports past. */
-  padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
+  /* Generous bottom inset to clear the OS gesture pill, the Chrome bottom UI
+     strip, and any visualViewport over-reporting Chrome on Android does. */
+  padding-bottom: max(36px, env(safe-area-inset-bottom, 0px) + 16px);
 }
 
 .game-header {
