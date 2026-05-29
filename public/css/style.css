@@ -50,7 +50,12 @@ input[type="text"] {
 .hidden { display: none !important; }
 
 /* ── GAME ── */
-.game-page { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.game-page {
+  display: flex; flex-direction: column;
+  height: 100vh;   /* fallback for older browsers */
+  height: 100dvh;  /* tracks the actual usable viewport on mobile */
+  overflow: hidden;
+}
 
 .game-header {
   display: grid;
@@ -284,10 +289,12 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
     grid-template-areas:
       "canvas canvas"
       "players chat";
-    gap: 4px;
-    padding: 4px;
+    gap: 8px;
+    padding: 8px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
     overflow: hidden !important;
     position: relative;
+    min-height: 0;
   }
 
   .canvas-section {
@@ -376,11 +383,17 @@ input[type="range"] { width: 80px; accent-color: var(--accent); }
   .chat-panel .panel-body {
     flex: 1 1 auto;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
     opacity: 1 !important;
     pointer-events: auto !important;
     padding: .5rem;
   }
+  /* Players list scrolls internally if too long */
+  .players-panel .panel-body { overflow-y: auto; }
+  /* Chat: messages scroll, form pinned to the bottom of the panel */
+  .chat-panel .panel-body { padding: 0; }
+  .chat-messages { padding: .5rem; }
+  .chat-form { flex-shrink: 0; }
   .players-panel.collapsed, .chat-panel.collapsed { width: 100% !important; }
 
   /* Smaller chat input on compressed mobile panel */
