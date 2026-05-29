@@ -9,6 +9,14 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.set('trust proxy', 1);
+// Never cache the HTML shell so a redeploy reaches phones immediately;
+// versioned assets (style.css?v=...) can still be cached aggressively.
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path.endsWith('.html')) {
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  }
+  next();
+});
 app.use(express.static('public'));
 
 const rooms = new Map(); // code → Room
