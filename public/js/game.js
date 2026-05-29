@@ -100,12 +100,37 @@ btnLeaveRoom?.addEventListener('click', () => {
 });
 
 function renderPlayers(players, drawerId) {
-  playerListEl.innerHTML = players.map(p => `
-    <li class="${p.id === drawerId ? 'is-drawer' : ''} ${p.hasGuessed ? 'guessed' : ''}">
-      ${p.id === drawerId ? '🎨 ' : ''}${p.name}${p.id === myId ? ' (you)' : ''}
-      <span class="player-score">${p.score}</span>
-    </li>
-  `).join('');
+  const sorted = [...players].sort((a, b) => b.score - a.score);
+  const rankMap = new Map(sorted.map((p, i) => [p.id, i + 1]));
+
+  const initials = name => name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+
+  playerListEl.innerHTML = `<div class="players-section-label">Players</div>` + players.map(p => {
+    const isDrawer  = p.id === drawerId;
+    const isYou     = p.id === myId;
+    const guessed   = p.hasGuessed;
+    const cardCls   = [isDrawer ? 'is-drawer' : '', isYou && !isDrawer ? 'is-you' : '', guessed && !isDrawer ? 'has-guessed' : ''].filter(Boolean).join(' ');
+    const ring      = isDrawer ? '<div class="drawing-ring"></div>' : '';
+    const youTag    = isYou ? ' <span class="you-tag">(you)</span>' : '';
+    const status    = isDrawer
+      ? '<div class="p-status drawing-txt">✏ drawing</div>'
+      : guessed ? '<div class="p-status guessed-txt">✓ guessed</div>' : '';
+    const scoreUp   = guessed || isDrawer ? 'score-up' : '';
+    const rank      = rankMap.get(p.id);
+
+    return `
+      <div class="player-card ${cardCls}">
+        <div class="player-avatar" style="background:${p.color || '#818cf8'}">${ring}${initials(p.name)}</div>
+        <div class="player-info">
+          <div class="p-name">${p.name}${youTag}</div>
+          ${status}
+        </div>
+        <div class="player-right">
+          <div class="p-score ${scoreUp}">${p.score}</div>
+          <div class="p-rank">#${rank}</div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function addChat(html, cls = '') {

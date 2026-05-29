@@ -160,18 +160,72 @@ input[type="text"] {
 
 /* ── Players panel ── */
 .players-panel {
-  width: 240px; flex-shrink: 0;
-  background: color-mix(in srgb, var(--accent2) 14%, var(--surface));
+  width: 210px; background: #0c1628; flex-shrink: 0;
   display: flex; flex-direction: row; overflow: hidden;
   transition: width 0.25s ease;
 }
-.players-panel .panel-body { flex: 1; overflow-y: auto; padding: .75rem; min-width: 0; transition: opacity 0.15s; }
-.players-panel ul { list-style: none; }
-.players-panel li { padding: .4rem .5rem; margin-bottom: .3rem; border-radius: 6px; font-size: .85rem; background: var(--card); }
-.players-panel li.is-drawer { border-left: 3px solid var(--accent); }
-.players-panel li.guessed { opacity: .5; }
-.player-score { float: right; color: var(--accent); font-weight: 700; }
-.players-panel .panel-toggle-btn { border-left: 1px solid var(--card); }
+.players-panel .panel-body {
+  flex: 1; overflow-y: auto; padding: 10px 8px; min-width: 0;
+  transition: opacity 0.15s; display: flex; flex-direction: column; gap: 5px;
+}
+
+.players-section-label {
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.2); padding: 2px 4px 4px;
+}
+
+/* Player cards */
+.player-card {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 9px; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.03);
+}
+.player-card.is-drawer {
+  border-color: rgba(232,121,249,0.4);
+  background: rgba(232,121,249,0.08);
+}
+.player-card.is-you {
+  border-color: rgba(56,189,248,0.3);
+  background: rgba(56,189,248,0.06);
+}
+.player-card.has-guessed {
+  border-color: rgba(52,211,153,0.3);
+  background: rgba(52,211,153,0.06);
+}
+
+.player-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; position: relative;
+}
+.player-avatar .drawing-ring {
+  position: absolute; inset: -3px; border-radius: 50%;
+  border: 2px solid #e879f9;
+  animation: avatar-pulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes avatar-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.08); }
+}
+
+.player-info { flex: 1; min-width: 0; }
+.player-info .p-name {
+  font-size: 12px; font-weight: 600; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
+}
+.player-info .you-tag { font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 400; }
+.player-info .p-status { font-size: 10px; margin-top: 2px; }
+.player-info .p-status.drawing-txt { color: #e879f9; }
+.player-info .p-status.guessed-txt { color: #34d399; }
+
+.player-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+.player-right .p-score { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.4); }
+.player-right .p-score.score-up { color: #34d399; }
+.player-right .p-rank { font-size: 10px; color: rgba(255,255,255,0.2); }
+
+.players-panel .panel-toggle-btn { border-left: 1px solid rgba(255,255,255,0.06); }
 
 /* Players collapsed (desktop) */
 .players-panel.collapsed { width: 24px; }
