@@ -104,7 +104,7 @@ class Room {
 
     // Same-length wrong guess: reveal matching positions and apply penalty
     if (guess.length === this.currentWord.length) {
-      const PENALTY = 15;
+      const PENALTY = 10;
       player.score = Math.max(0, player.score - PENALTY);
 
       const hint = this.playerHints.get(playerId) || Array(this.currentWord.length).fill('_');
