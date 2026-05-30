@@ -1,6 +1,6 @@
 const { getRandomWords } = require('./words');
 
-const TURN_DURATION = 80; // seconds
+const TURN_DURATION = 75; // seconds
 const POINTS_MAX = 300;
 const POINTS_MIN = 50;
 

@@ -32,7 +32,7 @@ function generateCode() {
 
 function startTurnTimer(room) {
   clearInterval(room.timer);
-  room.secondsLeft = 80;
+  room.secondsLeft = 75;
 
   room.timer = setInterval(() => {
     room.secondsLeft--;
