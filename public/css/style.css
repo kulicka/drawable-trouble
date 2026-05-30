@@ -280,6 +280,7 @@ input[type="text"] {
 
 /* Toolbar */
 .toolbar { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; background: var(--surface); padding: .5rem .75rem; border-radius: 10px; width: 100%; }
+#btn-undo { margin-left: auto; }
 .color-swatches { display: flex; gap: .4rem; flex-wrap: wrap; }
 .swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .1s; }
 .swatch.active, .swatch:hover { transform: scale(1.2); border-color: #fff; }
