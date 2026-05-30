@@ -253,9 +253,23 @@ input[type="text"] {
   border-radius: var(--radius); gap: 1.2rem;
 }
 .word-picker h3 { font-size: 1.2rem; }
-.word-options { display: flex; gap: 1rem; }
-.word-options button { padding: .7rem 1.4rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: 700; }
-.word-options button:hover { opacity: .85; }
+.word-options { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.word-options button {
+  padding: .6rem 1.4rem .8rem; color: #fff; border: 1px solid transparent;
+  border-radius: 10px; font-size: 1.05rem; cursor: pointer; font-weight: 700;
+  display: flex; flex-direction: column; align-items: center; gap: .25rem;
+  transition: transform .1s, opacity .15s;
+}
+.word-options button::after {
+  content: attr(data-difficulty);
+  font-size: .65rem; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; opacity: .7;
+}
+.word-options button:hover { opacity: .88; transform: translateY(-2px); }
+
+.word-options button[data-difficulty="easy"]   { background: #15803d; border-color: #4ade8066; }
+.word-options button[data-difficulty="medium"] { background: #b45309; border-color: #fbbf2466; }
+.word-options button[data-difficulty="hard"]   { background: #b91c1c; border-color: #f8717166; }
 
 .turn-overlay {
   position: absolute; inset: 0; background: rgba(10,10,30,.85);

@@ -219,11 +219,12 @@ socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength, pla
 socket.on('word-options', (words) => {
   turnOverlay.classList.add('hidden');
   wordOptions.innerHTML = '';
-  words.forEach(w => {
+  words.forEach(({ word, difficulty }) => {
     const btn = document.createElement('button');
-    btn.textContent = w;
+    btn.textContent = word;
+    btn.dataset.difficulty = difficulty;
     btn.addEventListener('click', () => {
-      socket.emit('select-word', { word: w });
+      socket.emit('select-word', { word });
       wordPicker.classList.add('hidden');
     });
     wordOptions.appendChild(btn);

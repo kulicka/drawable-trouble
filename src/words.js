@@ -75,18 +75,34 @@ const wordsByDifficulty = {
   ],
 };
 
+function pickFrom(diff, excludeSet) {
+  const pool = wordsByDifficulty[diff];
+  const available = pool.filter(w => !excludeSet.has(w));
+  const useList = available.length ? available : pool;
+  return useList[Math.floor(Math.random() * useList.length)];
+}
+
 function getRandomWords(count = 3, difficulty = 'medium', exclude = []) {
-  const pool = wordsByDifficulty[difficulty] || [
-    ...wordsByDifficulty.easy,
-    ...wordsByDifficulty.medium,
-    ...wordsByDifficulty.hard,
-  ];
-  const unique = [...new Set(pool)];
   const excludeSet = new Set(exclude);
+
+  if (difficulty === 'mixed') {
+    const diffs = ['easy', 'medium', 'hard'];
+    const results = [];
+    for (let i = 0; i < count; i++) {
+      const diff = diffs[i % diffs.length];
+      const word = pickFrom(diff, excludeSet);
+      results.push({ word, difficulty: diff });
+      excludeSet.add(word);
+    }
+    return results.sort(() => Math.random() - 0.5);
+  }
+
+  const pool = wordsByDifficulty[difficulty] || wordsByDifficulty.medium;
+  const unique = [...new Set(pool)];
   const available = unique.filter(w => !excludeSet.has(w));
-  // If exclusion would leave fewer than `count`, fall back to the full pool.
   const useList = available.length >= count ? available : unique;
-  return [...useList].sort(() => Math.random() - 0.5).slice(0, count);
+  return [...useList].sort(() => Math.random() - 0.5).slice(0, count)
+    .map(word => ({ word, difficulty }));
 }
 
 module.exports = { getRandomWords };

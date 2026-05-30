@@ -60,8 +60,10 @@ function initToolbar() {
       updateCurrentColor(c);
       document.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
       s.classList.add('active');
-      erasing = false;
+      erasing = false; filling = false;
+      document.getElementById('btn-pen').classList.add('active');
       document.getElementById('btn-eraser').classList.remove('active');
+      document.getElementById('btn-fill').classList.remove('active');
       closeSwatchPopover();
     });
     swatchContainer.appendChild(s);
@@ -77,12 +79,25 @@ function initToolbar() {
     if (!toolbarEl.contains(e.target)) closeSwatchPopover();
   });
 
+  function activatePen() {
+    erasing = false;
+    filling = false;
+    document.getElementById('btn-pen').classList.add('active');
+    document.getElementById('btn-eraser').classList.remove('active');
+    document.getElementById('btn-fill').classList.remove('active');
+  }
+
+  document.getElementById('btn-pen').addEventListener('click', activatePen);
+
   document.getElementById('btn-fill').addEventListener('click', () => {
     filling = !filling;
     document.getElementById('btn-fill').classList.toggle('active', filling);
     if (filling) {
       erasing = false;
+      document.getElementById('btn-pen').classList.remove('active');
       document.getElementById('btn-eraser').classList.remove('active');
+    } else {
+      document.getElementById('btn-pen').classList.add('active');
     }
   });
 
@@ -103,7 +118,10 @@ function initToolbar() {
     document.getElementById('btn-eraser').classList.toggle('active', erasing);
     if (erasing) {
       filling = false;
+      document.getElementById('btn-pen').classList.remove('active');
       document.getElementById('btn-fill').classList.remove('active');
+    } else {
+      document.getElementById('btn-pen').classList.add('active');
     }
   });
 
@@ -241,6 +259,7 @@ function disableDrawing() {
   drawing = false;
   erasing = false;
   filling = false;
+  document.getElementById('btn-pen').classList.add('active');
   document.getElementById('btn-eraser').classList.remove('active');
   document.getElementById('btn-fill').classList.remove('active');
   canvas.style.cursor = 'default';
