@@ -357,9 +357,9 @@ input[type="range"] { width: 110px; accent-color: var(--accent); }
 .chat-msg.correct { color: var(--correct); font-weight: 700; }
 .chat-msg.system { color: var(--muted); font-style: italic; }
 .penalty { color: #ff5252; font-size: .78rem; font-weight: 700; }
-.chat-form { display: flex; align-items: center; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
-.chat-form input { flex: 1; padding: .45rem .75rem; border: none; border-radius: 6px; background: var(--bg); color: var(--text); font-size: .9rem; height: 34px; }
-.chat-form .btn { padding: 0 .9rem; font-size: .85rem; height: 34px; flex-shrink: 0; }
+.chat-form { display: flex; align-items: stretch; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
+.chat-form input { flex: 1; padding: .45rem .75rem; border: none; border-radius: 6px; background: var(--bg); color: var(--text); font-size: .9rem; }
+.chat-form .btn { padding: 0 .9rem !important; font-size: .85rem; flex-shrink: 0; border-radius: 6px; }
 
 /* Chat collapsed (desktop) */
 .chat-panel.collapsed { width: 24px; border-left-color: var(--card); }
