@@ -6,6 +6,7 @@
   <title>Drawable Trouble</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
   <link rel="stylesheet" href="/css/style.css?v=2026-05-29f" />
   <script>
     // Pin the page to the actual visible viewport on mobile Chrome.
@@ -148,27 +149,62 @@
       </div>
 
       <div class="toolbar" id="toolbar">
-        <div class="toolbar-section">
-          <button class="color-picker-trigger" id="color-picker-trigger" type="button" aria-label="Pick color" title="Pick color">
-            <span class="current-color" id="current-color"></span>
-          </button>
-          <div class="color-swatches" id="color-swatches"></div>
-          <label class="custom-color-btn" data-hint="Custom color" title="">
+
+        <!-- Mobile-only swatch trigger -->
+        <button class="color-picker-trigger" id="color-picker-trigger" type="button" aria-label="Pick color">
+          <span class="current-color" id="current-color"></span>
+        </button>
+
+        <!-- ① Colour group -->
+        <div class="tb-group tb-color-group" id="tb-color-group">
+          <div id="color-swatches"></div>
+          <label class="tb-custom-picker" data-hint="Custom color">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 14.5 3.1 16.74 4.84 18.3C5.63 19.03 6.75 18.36 6.75 17.28V17C6.75 16.31 7.31 15.75 8 15.75C8.69 15.75 9.25 16.31 9.25 17V17.5C9.25 18.19 9.81 18.75 10.5 18.75H13.5C14.19 18.75 14.75 18.19 14.75 17.5V17C14.75 16.31 15.31 15.75 16 15.75C16.69 15.75 17.25 16.31 17.25 17V17.28C17.25 18.36 18.37 19.03 19.16 18.3C20.9 16.74 22 14.5 22 12C22 6.48 17.52 2 12 2Z" fill="url(#cpg)"/>
+              <circle cx="8.5" cy="10" r="1.5" fill="rgba(255,255,255,0.9)"/>
+              <circle cx="12" cy="7.5" r="1.5" fill="rgba(255,255,255,0.9)"/>
+              <circle cx="15.5" cy="10" r="1.5" fill="rgba(255,255,255,0.9)"/>
+              <defs>
+                <linearGradient id="cpg" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#f87171"/>
+                  <stop offset="25%" stop-color="#facc15"/>
+                  <stop offset="50%" stop-color="#34d399"/>
+                  <stop offset="75%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#e879f9"/>
+                </linearGradient>
+              </defs>
+            </svg>
             <input type="color" id="custom-color" value="#000000" />
           </label>
         </div>
-        <div class="toolbar-sep"></div>
-        <div class="toolbar-section">
-          <button class="tool-btn active" id="btn-pen" data-hint="Pen">✏️</button>
-          <button class="tool-btn" id="btn-eraser" data-hint="Eraser">⬜</button>
-          <button class="tool-btn" id="btn-fill" data-hint="Fill">🪣</button>
-          <label>Size <input type="range" id="brush-size" min="2" max="40" value="6" /></label>
+
+        <div class="tb-sep"></div>
+
+        <!-- ② Tools -->
+        <div class="tb-group tb-tool-group">
+          <button class="tb-tool-btn active" id="btn-pen" data-hint="Pen"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+          <button class="tb-tool-btn" id="btn-eraser" data-hint="Eraser"><i class="ti ti-eraser" aria-hidden="true"></i></button>
+          <button class="tb-tool-btn" id="btn-fill" data-hint="Fill"><i class="ti ti-droplet" aria-hidden="true"></i></button>
         </div>
-        <div class="toolbar-sep"></div>
-        <div class="toolbar-section toolbar-section--end">
-          <button class="tool-btn" id="btn-undo" data-hint="Undo">↩️</button>
-          <button class="tool-btn" id="btn-clear" data-hint="Clear">🗑️</button>
+
+        <div class="tb-sep"></div>
+
+        <!-- ③ Size -->
+        <div class="tb-group tb-size-group">
+          <i class="ti ti-circle-filled tb-dot-sm" aria-hidden="true"></i>
+          <input type="range" id="brush-size" min="2" max="40" value="6" />
+          <i class="ti ti-circle-filled tb-dot-lg" aria-hidden="true"></i>
+          <span class="tb-sz-val" id="brush-size-val">6</span>
         </div>
+
+        <div class="tb-spacer"></div>
+
+        <!-- ④ Actions -->
+        <div class="tb-group tb-action-group">
+          <button class="tb-act-btn" id="btn-undo" data-hint="Undo"><i class="ti ti-arrow-back-up" aria-hidden="true"></i></button>
+          <button class="tb-act-btn tb-act-danger" id="btn-clear" data-hint="Clear"><i class="ti ti-trash" aria-hidden="true"></i></button>
+        </div>
+
       </div>
     </section>
 

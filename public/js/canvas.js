@@ -109,8 +109,10 @@ function initToolbar() {
 
   updateCurrentColor(color);
 
+  const szVal = document.getElementById('brush-size-val');
   document.getElementById('brush-size').addEventListener('input', e => {
     brushSize = parseInt(e.target.value);
+    if (szVal) szVal.textContent = e.target.value;
   });
 
   document.getElementById('btn-eraser').addEventListener('click', () => {

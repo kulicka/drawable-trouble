@@ -278,70 +278,119 @@ input[type="text"] {
   border-radius: var(--radius); font-size: 1.3rem; font-weight: 700; text-align: center;
 }
 
-/* Toolbar */
-.toolbar { display: flex; align-items: center; gap: 0; background: var(--surface); padding: .4rem .75rem; border-radius: 10px; width: 100%; }
-.toolbar-section { display: flex; align-items: center; gap: .55rem; padding: 0 .65rem; }
-.toolbar-section--end { margin-left: auto; }
-.toolbar-sep { width: 1px; align-self: stretch; background: rgba(255,255,255,.12); flex-shrink: 0; }
-.toolbar > .toolbar-sep:first-of-type { margin-right: .6rem; }
-.color-swatches { display: flex; gap: .4rem; flex-wrap: wrap; }
-.swatch { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .1s; }
-.swatch.active, .swatch:hover { transform: scale(1.2); border-color: #fff; }
-.custom-color-btn {
-  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
-  background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
-  border: 2px solid rgba(255,255,255,0.25);
-  flex-shrink: 0; display: block; position: relative;
-  transition: transform .1s, border-color .1s;
-}
-.custom-color-btn:hover { transform: scale(1.2); border-color: #fff; }
-.custom-color-btn input[type="color"] {
-  position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%;
-  cursor: pointer; border: none; padding: 0;
-}
-.divider { width: 1px; height: 28px; background: rgba(255,255,255,.2); }
-.tool-btn {
-  background: var(--card); border: none; border-radius: 6px;
-  padding: .3rem .6rem; font-size: 1.1rem; cursor: pointer;
+/* ── Toolbar (desktop) ── */
+.toolbar {
+  display: flex; align-items: center; gap: 10px;
+  background: #0c1628;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 10px 16px; width: 100%;
+  border-radius: 0 0 12px 12px;
   position: relative;
 }
-.tool-btn:hover { opacity: .8; }
-.tool-btn.active { outline: 2px solid var(--accent); }
 
-.tool-btn[data-hint]::after {
+/* Pill group container */
+.tb-group {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px; flex-shrink: 0;
+}
+.tb-color-group { padding: 6px 8px; }
+.tb-tool-group  { padding: 4px 8px; }
+.tb-size-group  { padding: 0 12px; height: 52px; }
+.tb-action-group{ padding: 4px 8px; }
+
+/* Separator */
+.tb-sep { width: 1px; height: 22px; background: rgba(255,255,255,.08); flex-shrink: 0; }
+
+/* Spacer */
+.tb-spacer { flex: 1; }
+
+/* Swatches */
+#color-swatches { display: flex; gap: 6px; align-items: center; }
+.swatch { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; transition: transform .1s; }
+.swatch.active, .swatch:hover { transform: scale(1.2); border-color: #fff; }
+.swatch.white { box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+
+/* Custom colour picker button */
+.tb-custom-picker {
+  width: 34px; height: 34px; border-radius: 7px;
+  border: 1.5px solid transparent;
+  background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+  transition: border-color .12s; overflow: hidden; padding: 0;
+}
+.tb-custom-picker:hover { border-color: rgba(255,255,255,.3); }
+.tb-custom-picker input[type="color"] {
+  position: absolute; inset: 0; opacity: 0;
+  cursor: pointer; width: 100%; height: 100%; border: none; padding: 0;
+}
+
+/* Tool buttons */
+.tb-tool-btn {
+  width: 46px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: rgba(255,255,255,.35);
+  font-size: 26px; border-radius: 7px;
+  background: none; border: 1.5px solid transparent;
+  transition: border-color .12s, color .12s; flex-shrink: 0;
+  position: relative;
+}
+.tb-tool-btn:hover { color: rgba(255,255,255,.8); }
+.tb-tool-btn.active { border-color: rgba(232,121,249,.65); color: #e879f9; }
+
+/* Action buttons */
+.tb-act-btn {
+  width: 42px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: rgba(255,255,255,.35);
+  font-size: 24px; border-radius: 7px;
+  background: none; border: none;
+  transition: background .12s, color .12s; flex-shrink: 0;
+  position: relative;
+}
+.tb-act-btn:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.75); }
+.tb-act-danger:hover { background: rgba(248,113,113,.12); color: #f87171; }
+
+/* Size group */
+.tb-dot-sm { font-size: 7px;  color: rgba(255,255,255,.25); }
+.tb-dot-lg { font-size: 15px; color: rgba(255,255,255,.25); }
+.tb-sz-val {
+  font-size: 11px; font-family: 'Bricolage Grotesque', sans-serif;
+  color: rgba(255,255,255,.45); min-width: 18px; text-align: right;
+}
+input[type="range"] { width: 100px; accent-color: #e879f9; cursor: pointer; }
+
+/* Tooltips for tool + action buttons */
+.tb-tool-btn[data-hint]::after,
+.tb-act-btn[data-hint]::after {
   content: attr(data-hint);
   position: absolute; bottom: calc(100% + 6px); left: 50%;
   transform: translateX(-50%);
   background: rgba(0,0,0,.82); color: #fff;
   font-size: 11px; font-weight: 600; letter-spacing: .03em;
   padding: 3px 8px; border-radius: 5px; white-space: nowrap;
-  opacity: 0; pointer-events: none;
-  transition: opacity .15s;
-  z-index: 20;
+  opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 20;
 }
-.tool-btn[data-hint]:hover::after { opacity: 1; }
-label { color: var(--muted); font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
-input[type="range"] { width: 110px; accent-color: var(--accent); }
+.tb-tool-btn[data-hint]:hover::after,
+.tb-act-btn[data-hint]:hover::after { opacity: 1; }
 
-/* Current-color trigger (mobile only — hidden on desktop) */
+/* Mobile-only colour trigger — hidden on desktop */
 .color-picker-trigger {
-  display: none;
-  width: 36px; height: 36px; flex-shrink: 0;
-  background: var(--card);
-  border: 2px solid rgba(255,255,255,.15);
-  border-radius: 8px;
-  padding: 4px;
-  cursor: pointer;
+  display: none; width: 36px; height: 36px; flex-shrink: 0;
+  background: var(--card); border: 2px solid rgba(255,255,255,.15);
+  border-radius: 8px; padding: 4px; cursor: pointer;
   align-items: center; justify-content: center;
 }
 .color-picker-trigger .current-color {
-  display: block;
-  width: 100%; height: 100%;
-  background: #000;
-  border-radius: 5px;
+  display: block; width: 100%; height: 100%;
+  background: #000; border-radius: 5px;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
 }
 .color-picker-trigger.open { border-color: rgba(232,121,249,.6); }
+
+label { color: var(--muted); font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
 
 /* ── Chat panel ── */
 .chat-panel {
@@ -425,50 +474,45 @@ input[type="range"] { width: 110px; accent-color: var(--accent); }
     min-height: 0;
   }
 
-  /* Drawing toolbar: single inline row below canvas, no wrap */
+  /* Drawing toolbar: compact single row on mobile */
   .toolbar {
-    position: relative !important;       /* anchor for the swatch popover */
-    bottom: auto !important;
-    left: auto !important; right: auto !important;
-    z-index: auto !important;
-    box-shadow: none !important;
-    border-radius: 8px;
-    background: var(--surface);
-    width: 100% !important;
-    gap: .35rem .45rem;
-    padding: .4rem .5rem;
-    flex-wrap: nowrap;
+    background: var(--surface) !important;
+    border-top: none !important;
+    border-radius: 8px !important;
+    padding: .4rem .5rem !important;
+    gap: .4rem !important;
+    flex-wrap: nowrap !important;
     overflow: visible;
   }
 
-  /* Show the trigger; swatches become a hidden popover above the toolbar */
+  /* Show the mobile colour trigger; hide the desktop colour group */
   .color-picker-trigger { display: inline-flex; }
-  .color-swatches {
-    flex: none;
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 6px; right: 6px;
-    background: var(--surface);
-    border: 1px solid var(--card);
-    border-radius: 12px;
-    padding: 10px;
+  .tb-color-group { display: none; }
+
+  /* When open, show colour group as a popover above the toolbar */
+  .toolbar.swatches-open .tb-color-group {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    position: absolute; bottom: calc(100% + 6px); left: 6px; right: 6px;
+    background: var(--surface); border: 1px solid var(--card);
+    border-radius: 12px; padding: 10px;
     box-shadow: 0 -6px 22px rgba(0,0,0,.5);
     z-index: 50;
-    display: none;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    overflow: visible;
+    background: #0c1628;
   }
-  .toolbar.swatches-open .color-swatches { display: grid; }
-  .toolbar.swatches-open .color-swatches .swatch {
-    width: 100%; height: auto; aspect-ratio: 1; border-width: 2.5px;
+  .toolbar.swatches-open #color-swatches {
+    display: flex; flex-wrap: wrap; gap: 8px;
   }
+  .toolbar.swatches-open .swatch { width: 28px; height: 28px; }
 
-  input[type="color"] { width: 32px; height: 32px; }
-  .tool-btn { padding: .3rem .5rem; font-size: 1.05rem; min-width: 36px; }
-  input[type="range"] { width: 56px; }
-  .toolbar label { font-size: .78rem; flex-shrink: 0; }
-  .toolbar > .divider { display: none; }
+  /* Compact tool + size on mobile */
+  .tb-sep { display: none; }
+  .tb-spacer { flex: 1; }
+  .tb-group { background: none; border: none; padding: 0; gap: .3rem; }
+  .tb-tool-btn { width: 34px; height: 32px; font-size: 20px; }
+  .tb-act-btn  { width: 32px; height: 32px; font-size: 18px; }
+  .tb-size-group { height: auto; padding: 0; gap: .3rem; }
+  .tb-dot-sm, .tb-dot-lg, .tb-sz-val { display: none; }
+  input[type="range"] { width: 70px; }
 
   /* Panels: side-by-side beneath canvas, always visible */
   .players-panel, .chat-panel {
