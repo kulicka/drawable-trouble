@@ -284,9 +284,26 @@ input[type="text"] {
 .swatch.active, .swatch:hover { transform: scale(1.2); border-color: #fff; }
 input[type="color"] { width: 32px; height: 32px; padding: 0; border: none; border-radius: 50%; cursor: pointer; background: none; }
 .divider { width: 1px; height: 28px; background: rgba(255,255,255,.2); }
-.tool-btn { background: var(--card); border: none; border-radius: 6px; padding: .3rem .6rem; font-size: 1.1rem; cursor: pointer; }
+.tool-btn {
+  background: var(--card); border: none; border-radius: 6px;
+  padding: .3rem .6rem; font-size: 1.1rem; cursor: pointer;
+  position: relative;
+}
 .tool-btn:hover { opacity: .8; }
 .tool-btn.active { outline: 2px solid var(--accent); }
+
+.tool-btn[data-hint]::after {
+  content: attr(data-hint);
+  position: absolute; bottom: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.82); color: #fff;
+  font-size: 11px; font-weight: 600; letter-spacing: .03em;
+  padding: 3px 8px; border-radius: 5px; white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s;
+  z-index: 20;
+}
+.tool-btn[data-hint]:hover::after { opacity: 1; }
 label { color: var(--muted); font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
 input[type="range"] { width: 80px; accent-color: var(--accent); }
 
