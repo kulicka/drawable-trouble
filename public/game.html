@@ -148,18 +148,25 @@
       </div>
 
       <div class="toolbar" id="toolbar">
-        <button class="color-picker-trigger" id="color-picker-trigger" type="button" aria-label="Pick color" title="Pick color">
-          <span class="current-color" id="current-color"></span>
-        </button>
-        <div class="color-swatches" id="color-swatches"></div>
-        <input type="color" id="custom-color" value="#000000" title="Custom color" />
-        <div class="divider"></div>
-        <label>Size <input type="range" id="brush-size" min="2" max="40" value="6" /></label>
-        <button class="tool-btn active" id="btn-pen" data-hint="Pen">✏️</button>
-        <button class="tool-btn" id="btn-eraser" data-hint="Eraser">⬜</button>
-        <button class="tool-btn" id="btn-fill" data-hint="Fill">🪣</button>
-        <button class="tool-btn" id="btn-undo" data-hint="Undo">↩️</button>
-        <button class="tool-btn" id="btn-clear" data-hint="Clear">🗑️</button>
+        <div class="toolbar-section">
+          <button class="color-picker-trigger" id="color-picker-trigger" type="button" aria-label="Pick color" title="Pick color">
+            <span class="current-color" id="current-color"></span>
+          </button>
+          <div class="color-swatches" id="color-swatches"></div>
+          <input type="color" id="custom-color" value="#000000" title="Custom color" />
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-section">
+          <button class="tool-btn active" id="btn-pen" data-hint="Pen">✏️</button>
+          <button class="tool-btn" id="btn-eraser" data-hint="Eraser">⬜</button>
+          <button class="tool-btn" id="btn-fill" data-hint="Fill">🪣</button>
+          <label>Size <input type="range" id="brush-size" min="2" max="40" value="6" /></label>
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-section toolbar-section--end">
+          <button class="tool-btn" id="btn-undo" data-hint="Undo">↩️</button>
+          <button class="tool-btn" id="btn-clear" data-hint="Clear">🗑️</button>
+        </div>
       </div>
     </section>
 
