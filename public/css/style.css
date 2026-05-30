@@ -284,7 +284,7 @@ input[type="text"] {
 .toolbar-section--end { margin-left: auto; }
 .toolbar-sep { width: 1px; align-self: stretch; background: rgba(255,255,255,.12); flex-shrink: 0; }
 .color-swatches { display: flex; gap: .4rem; flex-wrap: wrap; }
-.swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .1s; }
+.swatch { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .1s; }
 .swatch.active, .swatch:hover { transform: scale(1.2); border-color: #fff; }
 input[type="color"] { width: 32px; height: 32px; padding: 0; border: none; border-radius: 50%; cursor: pointer; background: none; }
 .divider { width: 1px; height: 28px; background: rgba(255,255,255,.2); }
