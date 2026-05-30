@@ -1,7 +1,7 @@
 const { getRandomWords } = require('./words');
 
 const TURN_DURATION = 75; // seconds
-const POINTS_MAX = 300;
+const POINTS_MAX = 375;
 const POINTS_MIN = 50;
 
 class Room {
