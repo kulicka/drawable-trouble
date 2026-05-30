@@ -98,7 +98,10 @@ class Room {
       const points = Math.max(POINTS_MIN, Math.round((this.secondsLeft / TURN_DURATION) * POINTS_MAX));
       player.score += points;
       const drawer = this.players.get(this.drawerId);
-      if (drawer) drawer.score += 10;
+      if (drawer) {
+        const earlyBonus = this.secondsLeft >= TURN_DURATION * 0.8 ? 25 : 0;
+        drawer.score += 10 + earlyBonus;
+      }
       return { result: 'correct', points };
     }
 
