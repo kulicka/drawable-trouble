@@ -302,15 +302,15 @@ input[type="text"] {
 
 /* Pill group container */
 .tb-group {
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 14px; flex-shrink: 0;
 }
-.tb-color-group { padding: 6px 8px; }
-.tb-tool-group  { padding: 4px 8px; }
-.tb-size-group  { padding: 0 12px; height: 52px; }
-.tb-action-group{ padding: 4px 8px; }
+.tb-color-group { padding: 8px 10px; }
+.tb-tool-group  { padding: 8px 10px; }
+.tb-size-group  { padding: 0 12px; height: 60px; gap: 10px; }
+.tb-action-group{ padding: 8px 10px; }
 
 /* Separator */
 .tb-sep { width: 1px; height: 22px; background: rgba(255,255,255,.08); flex-shrink: 0; }
@@ -318,52 +318,71 @@ input[type="text"] {
 /* Spacer */
 .tb-spacer { flex: 1; }
 
-/* Swatches */
-#color-swatches { display: flex; gap: 6px; align-items: center; }
-.swatch { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; transition: transform .1s; }
-.swatch.active, .swatch:hover { transform: scale(1.2); border-color: #fff; }
+/* Swatches — rounded squares with selected-state indicator */
+#color-swatches { display: flex; gap: 7px; align-items: center; }
+.swatch {
+  width: 38px; height: 30px; border-radius: 8px;
+  cursor: pointer; border: none; flex-shrink: 0;
+  position: relative;
+  transition: transform .12s, box-shadow .12s;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.swatch:hover { transform: translateY(-1px); }
 .swatch.white { box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+.swatch.active {
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.55), 0 0 0 2px rgba(255,255,255,.18);
+}
+.swatch.white.active {
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.35), 0 0 0 2px rgba(232,121,249,.55);
+}
 
-/* Custom colour picker button */
+/* Custom colour picker button — small color-wheel circle at the end of the row */
 .tb-custom-picker {
-  width: 34px; height: 34px; border-radius: 7px;
-  border: 1.5px solid transparent;
+  width: 34px; height: 30px; border-radius: 8px;
+  border: none;
   background: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   position: relative; flex-shrink: 0;
-  transition: border-color .12s; overflow: hidden; padding: 0;
+  overflow: hidden; padding: 0;
+  transition: transform .12s;
 }
-.tb-custom-picker:hover { border-color: rgba(255,255,255,.3); }
+.tb-custom-picker:hover { transform: translateY(-1px); }
+.tb-custom-picker svg { width: 28px; height: 28px; }
 .tb-custom-picker input[type="color"] {
   position: absolute; inset: 0; opacity: 0;
   cursor: pointer; width: 100%; height: 100%; border: none; padding: 0;
 }
 
-/* Tool buttons */
+/* Tool buttons — larger, prominent, subtle hover/active background */
 .tb-tool-btn {
-  width: 46px; height: 40px;
+  width: 56px; height: 48px;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: rgba(255,255,255,.35);
-  font-size: 26px; border-radius: 7px;
-  background: none; border: 1.5px solid transparent;
-  transition: border-color .12s, color .12s; flex-shrink: 0;
+  cursor: pointer; color: rgba(255,255,255,.85);
+  font-size: 26px; border-radius: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  transition: background .12s, color .12s, border-color .12s; flex-shrink: 0;
   position: relative;
 }
-.tb-tool-btn:hover { color: rgba(255,255,255,.8); }
-.tb-tool-btn.active { border-color: rgba(232,121,249,.65); color: #e879f9; }
+.tb-tool-btn:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14); }
+.tb-tool-btn.active {
+  background: rgba(232,121,249,.14);
+  border-color: rgba(232,121,249,.5);
+  color: #f0abfc;
+}
 
 /* Action buttons */
 .tb-act-btn {
-  width: 42px; height: 40px;
+  width: 46px; height: 44px;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: rgba(255,255,255,.35);
-  font-size: 24px; border-radius: 7px;
+  cursor: pointer; color: rgba(255,255,255,.55);
+  font-size: 24px; border-radius: 9px;
   background: none; border: none;
   transition: background .12s, color .12s; flex-shrink: 0;
   position: relative;
 }
-.tb-act-btn:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.75); }
-.tb-act-danger:hover { background: rgba(248,113,113,.12); color: #f87171; }
+.tb-act-btn:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); }
+.tb-act-danger:hover { background: rgba(248,113,113,.14); color: #f87171; }
 
 /* Size group */
 .tb-dot-sm { font-size: 7px;  color: rgba(255,255,255,.25); }
