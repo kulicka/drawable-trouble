@@ -41,7 +41,7 @@ const wordsByDifficulty = {
     "snow", "hill", "lake", "fire", "fog", "dew", "ash", "log",
     "cliff", "dune", "pond", "rose", "sand", "soil", "root", "wave", "wind",
     "tide", "moss", "oak", "palm", "weed", "mist", "peak", "rock", "hay",
-    "dawn", "dusk", "ray",
+    "dawn", "dusk", "ray", "rainbow",
   ],
 
   medium: [
@@ -123,7 +123,7 @@ const wordsByDifficulty = {
     "ambulance", "bulldozer", "helicopter", "motorcycle", "submarine",
     "tricycle", "unicycle", "snowmobile", "locomotive", "gondola",
     // Nature & places
-    "volcano", "iceberg", "mountain", "rainbow", "tornado", "windmill",
+    "volcano", "iceberg", "mountain", "tornado", "windmill",
     "lighthouse", "waterfall", "earthquake", "thunderstorm", "aurora",
     "archipelago",
     "peninsula", "glacier", "hailstorm", "lightning", "tundra", "observatory",
