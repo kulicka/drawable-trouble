@@ -10,6 +10,12 @@ let filling = false;
 let lastX = 0, lastY = 0;
 let drawController = null;
 
+// Shift-held straight-line mode (set when shift is down at mousedown).
+let shiftLine = false;
+let lineStartX = 0, lineStartY = 0;
+let lineEndX = 0, lineEndY = 0;
+let lineSnapshot = null;
+
 const MAX_HISTORY = 30;
 const drawerHistory = [];
 const guesserHistory = [];
@@ -232,19 +238,47 @@ function enableDrawing(socket) {
     socket.emit('stroke-start');
     drawing = true;
     lastX = x; lastY = y;
+    shiftLine = !!e.shiftKey;       // touch events don't have shiftKey -> false
+    if (shiftLine) {
+      lineStartX = x; lineStartY = y;
+      lineEndX = x; lineEndY = y;
+      lineSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
   }
 
   function move(e) {
     e.preventDefault();
     if (!drawing) return;
     const { x, y } = getPos(e);
+    if (shiftLine) {
+      // Live preview: restore the snapshot then redraw a fresh straight line
+      // from the stroke origin to the current cursor. Don't emit per-move
+      // (would flicker on other clients); we commit one segment on release.
+      ctx.putImageData(lineSnapshot, 0, 0);
+      drawSegment(lineStartX, lineStartY, x, y, color, brushSize, erasing);
+      lineEndX = x; lineEndY = y;
+      return;
+    }
     const data = { x0: lastX, y0: lastY, x1: x, y1: y, color, size: brushSize, erase: erasing };
     drawSegment(data.x0, data.y0, data.x1, data.y1, data.color, data.size, data.erase);
     socket.emit('draw', data);
     lastX = x; lastY = y;
   }
 
-  function end(e) { e.preventDefault(); drawing = false; }
+  function end(e) {
+    e.preventDefault();
+    if (drawing && shiftLine) {
+      // Commit the straight line as a single segment so other clients render it too.
+      socket.emit('draw', {
+        x0: lineStartX, y0: lineStartY,
+        x1: lineEndX,   y1: lineEndY,
+        color, size: brushSize, erase: erasing,
+      });
+    }
+    drawing = false;
+    shiftLine = false;
+    lineSnapshot = null;
+  }
 
   canvas.addEventListener('mousedown', start, { signal });
   canvas.addEventListener('mousemove', move, { signal });
@@ -261,6 +295,8 @@ function disableDrawing() {
   drawing = false;
   erasing = false;
   filling = false;
+  shiftLine = false;
+  lineSnapshot = null;
   document.getElementById('btn-pen').classList.add('active');
   document.getElementById('btn-eraser').classList.remove('active');
   document.getElementById('btn-fill').classList.remove('active');
