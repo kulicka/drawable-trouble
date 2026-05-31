@@ -71,7 +71,7 @@ const wordsByDifficulty = {
     "carpet", "kettle", "laptop", "remote", "shield", "trophy",
     "anvil", "basket", "bottle", "drawer", "faucet", "fridge", "magnet",
     "mailbox", "radio", "razor", "saucer", "shovel", "slipper", "speaker",
-    "stove", "syringe", "tongs", "vacuum", "pliers", "wrench",
+    "stove", "syringe", "tongs", "vacuum", "pliers", "wrench", "scissors",
     // Sports / games
     "basketball", "baseball", "bowling", "chess", "dumbbell", "football",
     "frisbee", "helmet", "hockey", "jersey", "racket", "skates", "skateboard",
@@ -113,7 +113,7 @@ const wordsByDifficulty = {
     "mozzarella", "parmesan", "pomegranate", "raspberry", "smoothie",
     "spaghetti", "dumpling", "marshmallow",
     // Objects
-    "glasses", "umbrella", "suitcase", "scissors", "telescope", "envelope",
+    "glasses", "umbrella", "suitcase", "telescope", "envelope",
     "notebook", "matches", "parachute", "binoculars", "thermometer",
     "microscope", "calculator", "headphones",
     "stethoscope", "typewriter", "projector", "harmonica", "accordion",
