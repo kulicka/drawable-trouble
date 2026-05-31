@@ -4,6 +4,15 @@ const { Server } = require('socket.io');
 const Room = require('./src/room');
 const { getRandomWords } = require('./src/words');
 
+// Tiny structured logger. Writes one line per event to stdout so fly.io's
+// log stream and `journalctl` both pick it up. Keep ctx flat and small.
+function log(level, msg, ctx) {
+  const t = new Date().toISOString();
+  const c = ctx ? ' ' + JSON.stringify(ctx) : '';
+  process.stdout.write(`${t} [${level}] ${msg}${c}\n`);
+}
+const sid = (s) => s ? s.slice(0, 6) : null; // short socket id for readable logs
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -52,16 +61,23 @@ function startTurnTimer(room) {
 function endTurn(room) {
   clearInterval(room.timer);
   const word = room.currentWord;
+  const guessed = [...room.players.values()].filter(p => p.hasGuessed).length;
+  log('info', 'turn ended', { code: room.code, round: room.round, word, guessed });
   io.to(room.code).emit('turn-ended', { word, players: room.getPublicPlayers() });
 
   setTimeout(() => {
     const continues = room.nextTurn();
     if (!continues) {
+      const scores = room.getPublicPlayers().map(p => ({ name: p.name, score: p.score }));
+      log('info', 'game ended', { code: room.code, scores });
       io.to(room.code).emit('game-ended', { players: room.getPublicPlayers() });
       return;
     }
     const drawerId = room.drawerId;
     const words = getRandomWords(3, room.difficulty, [...room.usedWords]);
+    log('info', 'next turn', {
+      code: room.code, round: room.round, drawer: room.players.get(drawerId)?.name,
+    });
     io.to(room.code).emit('new-turn', {
       drawerId,
       drawerName: room.players.get(drawerId)?.name,
@@ -75,6 +91,7 @@ function endTurn(room) {
 }
 
 io.on('connection', (socket) => {
+  log('info', 'socket connect', { sid: sid(socket.id), total: io.engine.clientsCount });
 
   socket.on('create-room', ({ playerName, playerColor }) => {
     const code = generateCode();
@@ -82,18 +99,26 @@ io.on('connection', (socket) => {
     room.addPlayer(socket.id, playerName, playerColor);
     rooms.set(code, room);
     socket.join(code);
+    log('info', 'room created', { code, host: playerName, sid: sid(socket.id), rooms: rooms.size });
     socket.emit('room-created', { code, playerId: socket.id, players: room.getPublicPlayers() });
   });
 
   socket.on('join-room', ({ code, playerName, playerColor }) => {
     const room = rooms.get(code);
-    if (!room) return socket.emit('error', 'Room not found.');
-    if (room.players.size >= 8) return socket.emit('error', 'Room is full.');
+    if (!room) {
+      log('warn', 'join-room: not found', { code, sid: sid(socket.id) });
+      return socket.emit('error', 'Room not found.');
+    }
+    if (room.players.size >= 8) {
+      log('warn', 'join-room: full', { code, sid: sid(socket.id) });
+      return socket.emit('error', 'Room is full.');
+    }
 
     room.addPlayer(socket.id, playerName, playerColor);
     if (room.state !== 'lobby') room.drawerOrder.push(socket.id);
     socket.join(code);
     const inProgress = room.state !== 'lobby';
+    log('info', 'player joined', { code, name: playerName, sid: sid(socket.id), inProgress, players: room.players.size });
     socket.emit('room-joined', { code, playerId: socket.id, players: room.getPublicPlayers(), inProgress });
     socket.to(code).emit('player-joined', { players: room.getPublicPlayers() });
   });
@@ -103,6 +128,10 @@ io.on('connection', (socket) => {
     if (!room) return;
     const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
     const drawerId = room.drawerId;
+    log('info', 'game started', {
+      code: room.code, players: room.players.size, rounds: room.maxRounds,
+      difficulty: room.difficulty, firstDrawer: room.players.get(drawerId)?.name,
+    });
     io.to(room.code).emit('game-started', {
       drawerId,
       drawerName: room.players.get(drawerId)?.name,
@@ -119,6 +148,9 @@ io.on('connection', (socket) => {
     clearInterval(room.timer);
     const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
     const drawerId = room.drawerId;
+    log('info', 'game restarted', {
+      code: room.code, players: room.players.size, rounds: room.maxRounds, difficulty: room.difficulty,
+    });
     io.to(room.code).emit('game-started', {
       drawerId,
       drawerName: room.players.get(drawerId)?.name,
@@ -133,6 +165,9 @@ io.on('connection', (socket) => {
     const room = [...rooms.values()].find(r => r.drawerId === socket.id && r.state === 'selecting');
     if (!room) return;
     room.selectWord(word);
+    log('info', 'word selected', {
+      code: room.code, round: room.round, drawer: room.players.get(socket.id)?.name, length: word.length,
+    });
     io.to(socket.id).emit('your-word', word);
     io.to(room.code).except(socket.id).emit('word-hint', { hint: room.wordHint(), length: word.length });
     startTurnTimer(room);
@@ -179,6 +214,9 @@ io.on('connection', (socket) => {
       if (result.result === 'already') return;
 
       if (result.result === 'correct') {
+        log('info', 'correct guess', {
+          code: room.code, round: room.round, name: player.name, points: result.points, remaining: room.secondsLeft,
+        });
         io.to(room.code).emit('correct-guess', {
           playerId: socket.id,
           name: player.name,
@@ -207,7 +245,10 @@ io.on('connection', (socket) => {
 
   socket.on('rejoin', ({ roomCode, playerName, playerColor, playerId }) => {
     const room = rooms.get(roomCode);
-    if (!room) return;
+    if (!room) {
+      log('warn', 'rejoin: room gone', { code: roomCode, name: playerName, sid: sid(socket.id) });
+      return;
+    }
 
     // Re-associate player: old socket ID → new socket ID
     const player = room.players.get(playerId);
@@ -218,10 +259,12 @@ io.on('connection', (socket) => {
       const idx = room.drawerOrder.indexOf(playerId);
       if (idx !== -1) room.drawerOrder[idx] = socket.id;
       if (room.hostId === playerId) room.hostId = socket.id;
+      log('info', 'player rejoined (in-grace)', { code: roomCode, name: player.name, sid: sid(socket.id) });
     } else {
       // Disconnect ran past the grace period — re-add and put back in rotation
       room.addPlayer(socket.id, playerName, playerColor);
       if (room.state !== 'lobby') room.drawerOrder.push(socket.id);
+      log('info', 'player rejoined (re-added)', { code: roomCode, name: playerName, sid: sid(socket.id), players: room.players.size });
     }
 
     socket.join(roomCode);
@@ -256,16 +299,23 @@ io.on('connection', (socket) => {
       if (room.hostId === socket.id && room.state !== 'lobby') return;
       const wasDrawer = room.drawerId === socket.id;
       const wasHost = room.hostId === socket.id;
+      const name = room.players.get(socket.id)?.name;
       room.removePlayer(socket.id);
       socket.leave(code);
 
-      if (room.players.size === 0) { rooms.delete(code); return; }
+      if (room.players.size === 0) {
+        rooms.delete(code);
+        log('info', 'room closed (empty)', { code, rooms: rooms.size });
+        return;
+      }
 
       if (wasHost) {
         room.hostId = [...room.players.keys()][0];
+        log('info', 'host transferred', { code, to: room.players.get(room.hostId)?.name });
         io.to(room.hostId).emit('you-are-host');
       }
 
+      log('info', 'player left', { code, name, players: room.players.size });
       io.to(code).emit('player-left', { players: room.getPublicPlayers() });
 
       if (wasDrawer && room.state === 'drawing') {
@@ -277,22 +327,30 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    log('info', 'socket disconnect', { sid: sid(socket.id), total: io.engine.clientsCount });
     for (const [code, room] of rooms) {
       if (!room.players.has(socket.id)) continue;
       const wasDrawer = room.drawerId === socket.id;
       const inGame = room.state !== 'lobby';
+      const name = room.players.get(socket.id)?.name;
 
       const doRemove = () => {
         if (!room.players.has(socket.id)) return; // already rejoined under new socket
         room.removePlayer(socket.id);
 
-        if (room.players.size === 0) { rooms.delete(code); return; }
+        if (room.players.size === 0) {
+          rooms.delete(code);
+          log('info', 'room closed (empty after disconnect)', { code, name, rooms: rooms.size });
+          return;
+        }
 
         if (room.hostId === socket.id) {
           room.hostId = [...room.players.keys()][0];
+          log('info', 'host transferred', { code, to: room.players.get(room.hostId)?.name });
           io.to(room.hostId).emit('you-are-host');
         }
 
+        log('info', 'player removed (disconnect)', { code, name, players: room.players.size });
         io.to(code).emit('player-left', { players: room.getPublicPlayers() });
 
         if (wasDrawer && room.state === 'drawing') {
@@ -313,4 +371,4 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`drawable-trouble running on http://localhost:${PORT}`));
+server.listen(PORT, () => log('info', 'server listening', { port: PORT, node: process.version }));
