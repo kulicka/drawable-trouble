@@ -7,8 +7,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
-  <link rel="stylesheet" href="/css/style.css?v=2026-05-31c" />
+  <link rel="stylesheet" href="/css/style.css?v=2026-05-31d" />
   <script>
+    // Apply the user's chosen swatch color from the lobby as the in-game
+    // accent. Runs before paint so highlight strokes never flash fuchsia
+    // first.
+    (function () {
+      var c = localStorage.getItem('playerColor') || sessionStorage.getItem('playerColor');
+      if (c && /^#[0-9a-f]{6}$/i.test(c)) {
+        document.documentElement.style.setProperty('--brand', c);
+      }
+    })();
+
     // Pin the page to the actual visible viewport on mobile Chrome.
     // window.visualViewport.height excludes browser chrome AND any virtual
     // keyboard, so it's more accurate than 100vh/100dvh in all states.
@@ -54,8 +64,8 @@
       <div class="game-logo">
         <div class="game-logo-mark">
           <svg width="22" height="22" viewBox="0 0 52 52" fill="none" aria-hidden="true">
-            <path d="M26 8 L29 20 L41 20 L31 28 L35 40 L26 33 L17 40 L21 28 L11 20 L23 20 Z" fill="#e879f9" opacity="0.25"/>
-            <path d="M26 12 L28.5 21 L38 21 L30.5 26.5 L33 36 L26 30.5 L19 36 L21.5 26.5 L14 21 L23.5 21 Z" fill="#e879f9"/>
+            <path d="M26 8 L29 20 L41 20 L31 28 L35 40 L26 33 L17 40 L21 28 L11 20 L23 20 Z" fill="currentColor" opacity="0.25"/>
+            <path d="M26 12 L28.5 21 L38 21 L30.5 26.5 L33 36 L26 30.5 L19 36 L21.5 26.5 L14 21 L23.5 21 Z" fill="currentColor"/>
             <path d="M10 14 Q14 10 16 14" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" fill="none"/>
             <path d="M36 38 Q40 34 42 38" stroke="#f9a8d4" stroke-width="2" stroke-linecap="round" fill="none"/>
             <circle cx="10" cy="36" r="2" fill="#a78bfa"/>
