@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
-  <link rel="stylesheet" href="/css/style.css?v=2026-05-29f" />
+  <link rel="stylesheet" href="/css/style.css?v=2026-05-31a" />
   <script>
     // Pin the page to the actual visible viewport on mobile Chrome.
     // window.visualViewport.height excludes browser chrome AND any virtual
@@ -77,7 +77,6 @@
     </div>
     <div class="header-center">
       <div id="word-display" class="word-display">Waiting...</div>
-      <div id="round-display" class="round-display"></div>
     </div>
     <div class="header-right">
       <div id="timer" class="timer">--</div>
@@ -95,6 +94,7 @@
 
     <aside class="players-panel" id="players-panel">
       <div class="panel-body">
+        <div id="round-display" class="round-display">Round —</div>
         <button class="btn-leave-room hidden" id="btn-leave-room" type="button">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

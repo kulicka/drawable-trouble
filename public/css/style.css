@@ -128,7 +128,18 @@ input[type="text"] {
 .btn-leave-room:hover { background: rgba(248,113,113,.18); }
 .btn-leave-room:active { transform: scale(.97); }
 .word-display { font-size: 1.4rem; font-weight: 700; letter-spacing: .15em; }
-.round-display { font-size: .8rem; color: var(--muted); text-align: center; margin-top: .1rem; }
+.round-display {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(232,121,249,.85);
+  background: rgba(232,121,249,.1);
+  border: 1px solid rgba(232,121,249,.28);
+  border-radius: 999px;
+  padding: 4px 10px;
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
 .timer {
   font-size: 1.6rem; font-weight: 700; color: var(--accent);
   min-width: 2.5ch; text-align: center;
@@ -434,7 +445,7 @@ label { color: var(--muted); font-size: .85rem; display: flex; align-items: cent
     font-size: 1rem; letter-spacing: .08em;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .round-display { font-size: .7rem; }
+  .round-display { font-size: 10px; padding: 3px 8px; margin-bottom: 8px; }
   .timer { font-size: 1.15rem; min-width: 2ch; }
   .room-code-pill { padding: .25rem .45rem; font-size: .72rem; letter-spacing: .08em; gap: .25rem; }
   .room-code-pill .room-code-icon { width: 11px; height: 11px; }
