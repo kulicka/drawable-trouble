@@ -537,9 +537,16 @@ label { color: var(--muted); font-size: .85rem; display: flex; align-items: cent
     background: #0c1628;
   }
   .toolbar.swatches-open #color-swatches {
-    display: flex; flex-wrap: wrap; gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
   }
-  .toolbar.swatches-open .swatch { width: 28px; height: 28px; }
+  /* Mobile popover: show the first 8 colors only — keeps tap targets large and the grid even. */
+  .toolbar.swatches-open .swatch {
+    width: 100%; height: auto; aspect-ratio: 1;
+    border-radius: 10px;
+  }
+  .toolbar.swatches-open .swatch:nth-child(n+9) { display: none; }
 
   /* Compact tool + size on mobile */
   .tb-sep { display: none; }
