@@ -447,6 +447,7 @@ label { color: var(--muted); font-size: .85rem; display: flex; align-items: cent
 .chat-form { display: flex; align-items: center; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
 .chat-form input, .chat-form .btn {
   height: 36px;
+  margin: 0;
   padding: 0 .75rem;
   box-sizing: border-box;
   font-size: .9rem;
