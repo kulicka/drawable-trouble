@@ -30,6 +30,8 @@ app.use(express.static('public'));
 
 const rooms = new Map(); // code → Room
 
+const SELECT_DURATION = 15; // seconds the drawer has to pick a word
+
 const CODE_ALPHABET = 'ABCDEFGHJKLMNOPRSTUVWXYZ123456789';
 function generateCode() {
   let code = '';
@@ -37,6 +39,31 @@ function generateCode() {
     code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
   }
   return code;
+}
+
+// Emit word options to the current drawer and arm a server-side auto-pick
+// timer. If the drawer hasn't selected by SELECT_DURATION, a random one of
+// the three offered words is chosen for them.
+function offerWords(room) {
+  const words = getRandomWords(3, room.difficulty, [...room.usedWords]);
+  room.offeredWords = words;
+  clearTimeout(room.selectTimer);
+  room.selectTimer = setTimeout(() => {
+    if (room.state !== 'selecting' || !room.offeredWords) return;
+    const drawerId = room.drawerId;
+    if (!drawerId) return;
+    const pick = room.offeredWords[Math.floor(Math.random() * room.offeredWords.length)].word;
+    log('info', 'word auto-picked (select timeout)', {
+      code: room.code, drawer: room.players.get(drawerId)?.name, word: pick,
+    });
+    room.selectWord(pick);
+    room.offeredWords = null;
+    io.to(drawerId).emit('your-word', pick);
+    io.to(room.code).except(drawerId).emit('word-hint', { hint: room.wordHint(), length: pick.length });
+    startTurnTimer(room);
+  }, SELECT_DURATION * 1000);
+  io.to(room.drawerId).emit('word-options', words, SELECT_DURATION);
+  return words;
 }
 
 function startTurnTimer(room) {
@@ -60,6 +87,9 @@ function startTurnTimer(room) {
 
 function endTurn(room) {
   clearInterval(room.timer);
+  clearTimeout(room.selectTimer);
+  room.selectTimer = null;
+  room.offeredWords = null;
   const word = room.currentWord;
   const guessed = [...room.players.values()].filter(p => p.hasGuessed).length;
   log('info', 'turn ended', { code: room.code, round: room.round, word, guessed });
@@ -74,7 +104,6 @@ function endTurn(room) {
       return;
     }
     const drawerId = room.drawerId;
-    const words = getRandomWords(3, room.difficulty, [...room.usedWords]);
     log('info', 'next turn', {
       code: room.code, round: room.round, drawer: room.players.get(drawerId)?.name,
     });
@@ -86,7 +115,7 @@ function endTurn(room) {
       wordLength: 0,
       players: room.getPublicPlayers(),
     });
-    io.to(drawerId).emit('word-options', words);
+    offerWords(room);
   }, 4000);
 }
 
@@ -126,7 +155,7 @@ io.on('connection', (socket) => {
   socket.on('start-game', ({ rounds = 3, difficulty = 'medium' } = {}) => {
     const room = [...rooms.values()].find(r => r.hostId === socket.id);
     if (!room) return;
-    const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
+    room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
     const drawerId = room.drawerId;
     log('info', 'game started', {
       code: room.code, players: room.players.size, rounds: room.maxRounds,
@@ -139,14 +168,15 @@ io.on('connection', (socket) => {
       maxRounds: room.maxRounds,
       players: room.getPublicPlayers(),
     });
-    io.to(drawerId).emit('word-options', words);
+    offerWords(room);
   });
 
   socket.on('restart-game', ({ rounds = 3, difficulty = 'medium' } = {}) => {
     const room = [...rooms.values()].find(r => r.hostId === socket.id);
     if (!room || room.state !== 'ended') return;
     clearInterval(room.timer);
-    const words = room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
+    clearTimeout(room.selectTimer);
+    room.startGame(Math.min(Math.max(parseInt(rounds) || 3, 1), 10), difficulty);
     const drawerId = room.drawerId;
     log('info', 'game restarted', {
       code: room.code, players: room.players.size, rounds: room.maxRounds, difficulty: room.difficulty,
@@ -158,12 +188,15 @@ io.on('connection', (socket) => {
       maxRounds: room.maxRounds,
       players: room.getPublicPlayers(),
     });
-    io.to(drawerId).emit('word-options', words);
+    offerWords(room);
   });
 
   socket.on('select-word', ({ word }) => {
     const room = [...rooms.values()].find(r => r.drawerId === socket.id && r.state === 'selecting');
     if (!room) return;
+    clearTimeout(room.selectTimer);
+    room.selectTimer = null;
+    room.offeredWords = null;
     room.selectWord(word);
     log('info', 'word selected', {
       code: room.code, round: room.round, drawer: room.players.get(socket.id)?.name, length: word.length,
@@ -285,7 +318,11 @@ io.on('connection', (socket) => {
     });
 
     if (isDrawer && room.state === 'selecting') {
-      socket.emit('word-options', getRandomWords(3, room.difficulty, [...room.usedWords]));
+      // Re-send the same options the drawer was already offered (if any) so a
+      // mid-selection rejoin doesn't reset the choices. The server-side
+      // auto-pick timer is still running on its original schedule.
+      const words = room.offeredWords || getRandomWords(3, room.difficulty, [...room.usedWords]);
+      socket.emit('word-options', words, SELECT_DURATION);
     }
     if (isDrawer && room.state === 'drawing') {
       socket.emit('your-word', room.currentWord);

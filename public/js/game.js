@@ -216,7 +216,26 @@ socket.on('new-turn', ({ drawerId, drawerName, round, maxRounds, wordLength, pla
   }
 });
 
-socket.on('word-options', (words) => {
+const selectCountdownEl = document.getElementById('select-countdown');
+let selectCountdownTimer = null;
+function stopSelectCountdown() {
+  if (selectCountdownTimer) { clearInterval(selectCountdownTimer); selectCountdownTimer = null; }
+  if (selectCountdownEl) selectCountdownEl.textContent = '';
+}
+function startSelectCountdown(seconds) {
+  stopSelectCountdown();
+  if (!selectCountdownEl || !seconds) return;
+  let left = Math.max(0, Math.floor(seconds));
+  const render = () => { selectCountdownEl.textContent = `Auto-pick in ${left}s`; };
+  render();
+  selectCountdownTimer = setInterval(() => {
+    left--;
+    if (left <= 0) { stopSelectCountdown(); return; }
+    render();
+  }, 1000);
+}
+
+socket.on('word-options', (words, seconds) => {
   turnOverlay.classList.add('hidden');
   wordOptions.innerHTML = '';
   words.forEach(({ word, difficulty }) => {
@@ -226,14 +245,18 @@ socket.on('word-options', (words) => {
     btn.addEventListener('click', () => {
       socket.emit('select-word', { word });
       wordPicker.classList.add('hidden');
+      stopSelectCountdown();
     });
     wordOptions.appendChild(btn);
   });
   wordPicker.classList.remove('hidden');
+  startSelectCountdown(seconds || 0);
 });
 
 socket.on('your-word', (word) => {
   wordDisplay.textContent = word.toUpperCase();
+  wordPicker.classList.add('hidden');
+  stopSelectCountdown();
 });
 
 socket.on('word-hint', ({ hint, length }) => {
@@ -273,6 +296,7 @@ socket.on('turn-ended', ({ word, players }) => {
   wordDisplay.textContent = word.toUpperCase();
   setDrawerUI(false);
   wordPicker.classList.add('hidden');
+  stopSelectCountdown();
   addChat(`The word was: <strong>${word}</strong>`, 'system');
   renderPlayers(players, null);
   showTurnOverlay(`The word was "${word}"`, 3500);

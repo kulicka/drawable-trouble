@@ -290,6 +290,14 @@ input[type="text"] {
 .word-options button[data-difficulty="medium"] { background: #b45309; border-color: #fbbf2466; }
 .word-options button[data-difficulty="hard"]   { background: #b91c1c; border-color: #f8717166; }
 
+.select-countdown {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: .85rem; font-weight: 600;
+  color: rgba(255,255,255,.55);
+  letter-spacing: .04em;
+  min-height: 1.2em;
+}
+
 .turn-overlay {
   position: absolute; inset: 0; background: rgba(10,10,30,.85);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2rem;
