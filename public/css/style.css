@@ -444,9 +444,20 @@ label { color: var(--muted); font-size: .85rem; display: flex; align-items: cent
 .chat-msg.correct { color: var(--correct); font-weight: 700; }
 .chat-msg.system { color: var(--muted); font-style: italic; }
 .penalty { color: #ff5252; font-size: .78rem; font-weight: 700; }
-.chat-form { display: flex; align-items: stretch; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
-.chat-form input { flex: 1; padding: .45rem .75rem; border: none; border-radius: 6px; background: var(--bg); color: var(--text); font-size: .9rem; }
-.chat-form .btn { padding: 0 .9rem !important; font-size: .85rem; flex-shrink: 0; border-radius: 6px; }
+.chat-form { display: flex; align-items: center; padding: .5rem; gap: .4rem; border-top: 2px solid var(--card); }
+.chat-form input, .chat-form .btn {
+  height: 36px;
+  padding: 0 .75rem;
+  box-sizing: border-box;
+  font-size: .9rem;
+  border-radius: 6px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+.chat-form input { flex: 1; min-width: 0; background: var(--bg); color: var(--text); }
+.chat-form .btn { padding: 0 .9rem; font-weight: 700; flex-shrink: 0; }
 
 /* Chat collapsed (desktop) */
 .chat-panel.collapsed { width: 24px; border-left-color: var(--card); }
@@ -594,8 +605,8 @@ label { color: var(--muted); font-size: .85rem; display: flex; align-items: cent
 
   /* Smaller chat input on compressed mobile panel */
   .chat-form { padding: .35rem; gap: .3rem; }
-  .chat-form input { padding: .4rem .5rem; font-size: .85rem; }
-  .chat-form .btn { padding: .4rem .55rem; font-size: .8rem; }
+  .chat-form input, .chat-form .btn { height: 32px; font-size: .85rem; padding: 0 .6rem; }
+  .chat-form .btn { padding: 0 .8rem; font-size: .8rem; }
   .chat-messages { padding: .5rem; gap: .3rem; font-size: .8rem; }
   .chat-msg { font-size: .8rem; line-height: 1.35; }
 
